@@ -12,6 +12,7 @@
 
 # local tooling / preview
 .claude/settings.local.json
+.wrangler/
 node_modules/
 
 # palette comparison renders (regenerate from design/ when needed)

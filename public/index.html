@@ -37,17 +37,18 @@
     "sameAs": ["https://www.linkedin.com/in/selinaarmstrong", "https://github.com/SelinaArmstrong"]
   }
   </script>
-  <!-- Analytics. GA4 goes here: swap G-XXXXXXXXXX for the measurement ID and
-       uncomment. Kept last in <head> so it can never block first paint, and
-       loaded async so it stays off the critical path.
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GSVNHSVJQD"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag("js", new Date());
-    gtag("config", "G-XXXXXXXXXX", { anonymize_ip: true });
+    if (window.location.hostname === "selinaq.com") {
+      gtag("config", "G-GSVNHSVJQD", {
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false
+      });
+    }
   </script>
-  -->
 </head>
 <body id="top">
   <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -308,7 +309,7 @@
             <a class="c-link" href="https://www.linkedin.com/in/selinaarmstrong" target="_blank" rel="noopener">
               <svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg><span>LinkedIn</span>
             </a>
-            <a class="c-link" href="https://github.com/SelinaArmstrong/SelinaQ.com" target="_blank" rel="noopener">
+            <a class="c-link" href="https://github.com/SelinaArmstrong" target="_blank" rel="noopener">
               <svg class="icon" aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span>
             </a>
           </div>
@@ -323,6 +324,7 @@
     <div class="shell footer-inner">
       <span>© 2026 Selina Armstrong</span>
       <span class="colophon">Mountain View, California</span>
+      <a href="/privacy/">Privacy</a>
       <a class="to-top" href="#top">Back to top<svg class="icon up" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
   </footer>

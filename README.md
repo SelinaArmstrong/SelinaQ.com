@@ -13,6 +13,7 @@ public/          ← the deploy root. Everything that ships lives here.
   styles.css
   site.js
   404.html
+  privacy/       ← privacy policy
   robots.txt
   sitemap.xml
   Selina-Armstrong-Resume.pdf
@@ -33,26 +34,19 @@ Then open <http://localhost:8781/>.
 
 ## Deploying
 
-The site is plain static files — **publish the `public/` directory, not the
-repository root**, so `design/` and `.claude/` stay off the web.
+Cloudflare Workers Builds deploys the `selinaq-com` Worker on pushes to `main`
+from the private GitHub repository. The build command is empty and the deploy
+command is `npx wrangler deploy`.
 
-Per-host notes, since `404.html` and clean URLs are handled differently:
-
-| Host | Publish directory | 404 page |
-| --- | --- | --- |
-| GitHub Pages | `/public` on the default branch (or `gh-pages`) | `404.html` works as-is |
-| Netlify | `publish = "public"` | `404.html` works as-is |
-| Cloudflare Pages | build output `public` | `404.html` works as-is |
-| Vercel | set the output directory to `public` | `404.html` works as-is |
-
-A custom domain needs a `CNAME` file in `public/` on GitHub Pages; the other
-hosts set the domain in their dashboard.
+`wrangler.jsonc` publishes only `public/` and serves `404.html` with HTTP 404.
+The production hostname is `https://selinaq.com/`. The Cloudflare dashboard
+manages the custom domain and redirects `www.selinaq.com` to the apex.
 
 ## Analytics
 
-`index.html` carries a commented GA4 block at the end of `<head>`. Drop the
-measurement ID in and uncomment it; nothing else on the page depends on it,
-and no other third-party script is loaded.
+`public/index.html` loads the Google tag asynchronously at the end of `<head>`.
+The GA4 stream runs on `selinaq.com` and uses first-party analytics cookies.
+The footer links to the privacy policy at `/privacy/`.
 
 ## Things to keep in sync by hand
 

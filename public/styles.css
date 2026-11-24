@@ -12,50 +12,60 @@
    RGB channels so alpha variants can be mixed inline.
    ─────────────────────────────────────────────────────────────────── */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* ── surfaces ──  cool graphite, never a flat black; each step is a
-     visibly different plane so long dark stretches do not read as one slab */
-  --bg-rgb:    14 16 20;
+  /* ── surfaces ──  cool porcelain, never a flat white; the steps are far
+     enough apart that each band reads as its own plane */
+  --bg-rgb:    242 245 249;
   --bg:        rgb(var(--bg-rgb));
-  --bg-1:      #13161C;    /* lifted band: ticker, experience, contact */
-  --bg-2:      #171B22;    /* cards and media wells */
-  --bg-3:      #1C212A;    /* hover state of a card */
-  --line:      #242A33;
-  --line-2:    #333B46;
-  --edge:      rgb(255 255 255 / .045);   /* light catching the top of a plane */
+  --bg-1:      #E6ECF6;    /* lifted band: ticker, contact, footer */
+  --bg-2:      #FFFFFF;    /* cards and media wells */
+  --bg-3:      #FBFCFE;    /* hover state of a card */
+  --line:      #D2DAE6;
+  --line-2:    #BFCAD9;
+  --edge:      transparent;                                  /* dark theme only */
+  --lift:      0 1px 2px rgb(13 25 45 / .05),
+               0 14px 30px -20px rgb(13 25 45 / .28);        /* planes cast, not glow */
 
   /* ── type ── */
-  --text:      #EDEFF2;
-  --text-2:    #A7ADB6;
-  --text-3:    #868D97;    /* lightest colour used for real text - AA on every surface */
-  --text-hi:   #FBFCFE;    /* the metric figures */
-  --display-1: #CBD1D9;    /* gradient on the surname and on "touch." */
-  --display-2: #79808B;
+  --text:      #0F1419;
+  --text-2:    #4A5563;
+  --text-3:    #5C6878;    /* lightest colour used for real text - AA on every surface */
+  --text-hi:   #080C12;    /* the metric figures */
+  --display-1: #1B2634;    /* gradient on the surname and on "touch." */
+  --display-2: #68748A;
 
-  /* ── platinum ──  the structural accent: labels, numbers, hairlines */
-  --ac-rgb:    194 201 212;
+  /* ── slate ──  the structural accent: labels, numbers, hairlines */
+  --ac-rgb:    90 104 126;
   --ac:        rgb(var(--ac-rgb));
-  --ac-lt:     #E4E9EF;
-  --ac-dk:     #717A85;    /* rules, bullets, small marks (non-text) */
-  --ac-dim:    rgb(var(--ac-rgb) / .18);
+  --ac-dk:     #96A3B5;    /* weaker: rules, bullets, small marks (non-text) */
+  --ac-dim:    rgb(var(--ac-rgb) / .22);
 
   /* ── azure ──  the live accent: anything you can press, follow or track */
-  --hl-rgb:    88 166 255;
+  --hl-rgb:    28 95 208;
   --hl:        rgb(var(--hl-rgb));
-  --hl-lt:     #9ECBFF;
-  --hl-hi:     #CFE4FF;
-  --hl-dk:     #2F6FBF;
-  --hl-on:     #06121F;    /* text sitting on filled azure */
-  --hl-dim:    rgb(var(--hl-rgb) / .22);
+  --hl-lt:     #164FAF;    /* hover: goes deeper, not lighter */
+  --hl-hi:     #0F3D8C;
+  --hl-dk:     #5E90D8;    /* soft blue marks and rules */
+  --hl-on:     #FFFFFF;    /* text sitting on filled azure */
+  --hl-dim:    rgb(var(--hl-rgb) / .28);
 
-  --grad:      linear-gradient(100deg, var(--hl-lt), var(--hl) 48%, #3C84D8);
+  --grad:      linear-gradient(100deg, #2B74E8, var(--hl) 48%, #164FAF);
   --grad-rule: linear-gradient(90deg, var(--ac), var(--hl));
 
-  /* ── ambience ──  hue in the dark field, so it is never dead grey */
-  --aura-1:    rgb(var(--hl-rgb) / .16);
-  --aura-2:    #6E7BC92e;
+  /* ── ambience ── */
+  --aura-1:    rgb(var(--hl-rgb) / .13);
+  --aura-2:    #7C8FD426;
   --ok:        var(--hl);  /* "open to work" dot, copy confirmation */
+  --grain-op:  .022;
+  --grain-blend: multiply;
+
+  /* images adapt to the theme rather than being baked for one of them */
+  --band-filter: grayscale(1) brightness(1.34) contrast(.92);
+  --band-wash:   rgb(var(--hl-rgb) / .22);
+  --duo-filter:  grayscale(1) brightness(1.22) contrast(.95);
+  --duo-op:      .72;
+  --contact-bg:  linear-gradient(180deg, #DCE8FA, rgb(var(--bg-rgb) / 0) 78%);
 
   /* ── geometry & motion ── */
   --s1: .25rem; --s2: .5rem;  --s3: .75rem; --s4: 1rem;   --s5: 1.5rem;
@@ -67,6 +77,50 @@
   --body: Geist, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* The nocturne scheme, kept intact: add data-theme="dark" to <html>. */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-rgb:    14 16 20;
+  --bg-1:      #13161C;
+  --bg-2:      #171B22;
+  --bg-3:      #1C212A;
+  --line:      #242A33;
+  --line-2:    #333B46;
+  --edge:      rgb(255 255 255 / .045);
+  --lift:      0 0 transparent;
+
+  --text:      #EDEFF2;
+  --text-2:    #A7ADB6;
+  --text-3:    #868D97;
+  --text-hi:   #FBFCFE;
+  --display-1: #CBD1D9;
+  --display-2: #79808B;
+
+  --ac-rgb:    194 201 212;
+  --ac-dk:     #717A85;
+  --ac-dim:    rgb(var(--ac-rgb) / .18);
+
+  --hl-rgb:    88 166 255;
+  --hl-lt:     #9ECBFF;
+  --hl-hi:     #CFE4FF;
+  --hl-dk:     #2F6FBF;
+  --hl-on:     #06121F;
+  --hl-dim:    rgb(var(--hl-rgb) / .22);
+
+  --grad:      linear-gradient(100deg, var(--hl-lt), var(--hl) 48%, #3C84D8);
+  --aura-1:    rgb(var(--hl-rgb) / .16);
+  --aura-2:    #6E7BC92e;
+  --grain-op:  .035;
+  --grain-blend: normal;
+
+  --band-filter: grayscale(1) contrast(1.22) brightness(.8);
+  --band-wash:   rgb(var(--hl-rgb) / .1);
+  --duo-filter:  grayscale(1) contrast(1.2) brightness(.3);
+  --duo-op:      .6;
+  --contact-bg:  linear-gradient(180deg, var(--bg-1), rgb(var(--bg-rgb) / 0) 72%);
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; -webkit-text-size-adjust: 100%; }
 body {
@@ -74,9 +128,9 @@ body {
   /* three very soft pools of light over the base so no two regions of the
      page are the same value; fixed, so they read as a lit room, not wallpaper */
   background:
-    radial-gradient(130% 80% at 50% -18%,  #1B212E 0%, transparent 58%),
-    radial-gradient(95% 60% at 104% 10%,   #141C2B 0%, transparent 55%),
-    radial-gradient(85% 55% at -8% 68%,    #161C27 0%, transparent 60%),
+    radial-gradient(130% 80% at 50% -18%,  var(--aura-1)  0%, transparent 58%),
+    radial-gradient(95% 60% at 104% 10%,   var(--aura-2)  0%, transparent 55%),
+    radial-gradient(85% 55% at -8% 68%,    var(--aura-1)  0%, transparent 62%),
     var(--bg);
   background-attachment: fixed;
   font: 1rem/1.62 var(--body); letter-spacing: -.008em;
@@ -110,7 +164,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 /* ─────────────────────────────  ATMOSPHERE  ───────────────────────── */
 .grain {
-  position: fixed; inset: -50%; z-index: 80; pointer-events: none; opacity: .035;
+  position: fixed; inset: -50%; z-index: 80; pointer-events: none;
+  opacity: var(--grain-op); mix-blend-mode: var(--grain-blend);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: grain 7s steps(6) infinite;
 }
@@ -276,7 +331,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .hero-band-inner { position: absolute; inset: -12% 0; }
 .hero-band img {
   width: 100%; height: 100%; object-fit: cover; object-position: 50% 48%;
-  filter: grayscale(1) contrast(1.22) brightness(.8);
+  filter: var(--band-filter);
   transform: scale(1.06);
 }
 .js .hero-band-inner { clip-path: inset(0 0 100% 0); }
@@ -286,7 +341,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   background:
     linear-gradient(90deg, var(--bg) 1%, transparent 26%, transparent 74%, var(--bg) 99%),
     linear-gradient(180deg, var(--bg), rgb(var(--bg-rgb) / .3) 42%, var(--bg)),
-    linear-gradient(0deg, rgb(var(--hl-rgb) / .1), rgb(var(--hl-rgb) / .1));
+    linear-gradient(0deg, var(--band-wash), var(--band-wash));
   mix-blend-mode: normal;
 }
 
@@ -324,8 +379,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 /* ─────────────────────────────  SECTIONS  ─────────────────────────── */
 .section { position: relative; padding-block: clamp(4rem, 8vw, var(--s9)); }
-.eyebrow { display: flex; align-items: center; gap: .7rem; color: var(--ac); font-size: .71rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
-.eyebrow i { width: 1.6rem; height: 1px; background: var(--ac-dk); }
+.eyebrow { display: flex; align-items: center; gap: .7rem; color: var(--hl); font-size: .71rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+.eyebrow i { width: 1.6rem; height: 1px; background: var(--hl-dk); }
 .eyebrow.sm { color: var(--text-3); font-size: .67rem; letter-spacing: .17em; margin-bottom: .85rem; }
 .sec-head { margin-bottom: clamp(2.4rem, 5vw, 4rem); }
 .sec-head h2, .exp-head h2 {
@@ -340,7 +395,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .case:nth-child(even) .case-media { order: 2; }
 .case-media {
   position: relative; overflow: hidden; border: 1px solid var(--line); background: var(--bg-2);
-  box-shadow: inset 0 1px 0 var(--edge);
+  box-shadow: inset 0 1px 0 var(--edge), var(--lift);
   transition: border-color .6s var(--e), transform .6s var(--e);
   transform: perspective(1200px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg));
 }
@@ -357,11 +412,11 @@ a, button { -webkit-tap-highlight-color: transparent; }
   box-shadow: inset 0 0 0 1px var(--ac-dim); opacity: 0; transition: opacity .6s var(--e);
 }
 .case-media:hover::before { opacity: 1; }
-.case-media.duotone img { filter: grayscale(1) contrast(1.2) brightness(.3); }
+.case-media.duotone img { filter: var(--duo-filter); }
 .case-media.duotone::after {
   content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background: linear-gradient(155deg, var(--hl), var(--hl-dk));
-  mix-blend-mode: color; opacity: .6;
+  mix-blend-mode: color; opacity: var(--duo-op);
 }
 .case-media figcaption {
   position: absolute; inset: auto 0 0; z-index: 3; display: flex; justify-content: space-between; gap: 1rem;
@@ -369,7 +424,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   background: linear-gradient(transparent, rgb(var(--bg-rgb) / .88) 55%);
 }
 .case-num { display: flex; align-items: baseline; gap: .85rem; color: var(--text-3); font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; }
-.case-num span { color: var(--ac-lt); font-size: 1.05rem; letter-spacing: .04em; font-weight: 500; }
+.case-num span { color: var(--hl); font-size: 1.05rem; letter-spacing: .04em; font-weight: 500; }
 .case-body h3 { margin: .9rem 0 1rem; font-size: clamp(1.8rem, 3.2vw, 2.85rem); line-height: 1.06; letter-spacing: -.05em; font-weight: 500; }
 .case-lede { color: var(--text-2); line-height: 1.68; max-width: 32rem; }
 .case-points { margin-top: 1.6rem; display: grid; gap: .72rem; }
@@ -390,9 +445,28 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .case-links a:hover .icon { transform: translateX(3px); }
 
 /* ─────────────────────────────  EXPERIENCE  ───────────────────────── */
+/* The one inverted plane: it anchors the middle of a light page and gives
+   the blue somewhere to live at full strength. Scoped tokens, so every rule
+   inside the section keeps working unchanged. */
 .experience {
-  border-block: 1px solid var(--line);
-  background: linear-gradient(180deg, var(--bg-1), rgb(var(--bg-rgb) / .55));
+  --bg-1:      #10264F;          /* the ring punched around each rail dot */
+  --line:      #27406C;
+  --line-2:    #35507F;
+  --edge:      rgb(255 255 255 / .07);
+  --lift:      0 0 transparent;
+  --text:      #F2F6FC;
+  --text-2:    #B4C4DE;
+  --text-3:    #9BADCB;
+  --ac:        #9FB3D4;
+  --ac-dk:     #5B74A3;
+  --ac-dim:    rgb(159 179 212 / .22);
+  --hl-rgb:    127 179 255;
+  --hl-lt:     #A9CEFF;
+  --hl-hi:     #D5E7FF;
+  --hl-dk:     #4D7CC4;
+  --hl-dim:    rgb(127 179 255 / .25);
+  color: var(--text);
+  background: linear-gradient(168deg, #122C5C, #0B1C3D);
   box-shadow: inset 0 1px 0 var(--edge);
 }
 .exp-grid { display: grid; grid-template-columns: .82fr 1.18fr; gap: clamp(2.4rem, 6vw, 6rem); align-items: start; }
@@ -414,7 +488,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .rail > li.muted-item::before { background: var(--line-2); box-shadow: 0 0 0 4px var(--bg-1); }
 .yr { display: flex; align-items: center; gap: .7rem; color: var(--text-3); font-size: .76rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
-.rail > li:not(.muted-item) .yr { color: var(--ac); }
+.rail > li:not(.muted-item) .yr { color: var(--hl-lt); }
 .now {
   padding: .14rem .5rem; border: 1px solid var(--hl-dim); border-radius: 2rem;
   color: var(--hl-lt); font-size: .62rem; letter-spacing: .14em;
@@ -432,11 +506,11 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .cap {
   padding: clamp(1.4rem, 2.4vw, 2rem); border: 1px solid var(--line);
   background: linear-gradient(170deg, var(--bg-2), rgb(var(--bg-rgb) / .4));
-  box-shadow: inset 0 1px 0 var(--edge);
-  transition: border-color .5s var(--e), transform .5s var(--e), background .5s var(--e);
+  box-shadow: inset 0 1px 0 var(--edge), var(--lift);
+  transition: border-color .5s var(--e), transform .5s var(--e), background .5s var(--e), box-shadow .5s var(--e);
 }
 .cap:hover { border-color: var(--line-2); transform: translateY(-3px); background: linear-gradient(170deg, var(--bg-3), var(--bg-2)); }
-.cap-no { color: var(--ac-lt); font-size: .78rem; font-weight: 600; letter-spacing: .16em; }
+.cap-no { color: var(--hl); font-size: .78rem; font-weight: 600; letter-spacing: .16em; }
 .cap h3 { margin: .8rem 0 1.3rem; font-size: 1.3rem; letter-spacing: -.035em; font-weight: 500; }
 .tags { display: flex; flex-wrap: wrap; gap: .45rem; }
 .tags li {
@@ -453,7 +527,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .contact {
   position: relative; isolation: isolate; overflow: hidden; text-align: center;
   padding-block: clamp(4rem, 8vw, 7.5rem); border-top: 1px solid var(--line);
-  background: linear-gradient(180deg, var(--bg-1), rgb(var(--bg-rgb) / 0) 72%);
+  background: var(--contact-bg);
   box-shadow: inset 0 1px 0 var(--edge);
 }
 .contact-inner { position: relative; z-index: 2; display: grid; justify-items: center; }
@@ -552,9 +626,10 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   :root {
     color-scheme: light;
     --text: #000; --text-2: #1f1f1f; --text-3: #3a3a3a;
-    --ac: #333; --ac-lt: #333; --ac-dk: #8d8d8d;
+    --ac: #333; --ac-dk: #8d8d8d;
     --hl: #1a1a1a; --hl-lt: #1a1a1a; --hl-hi: #1a1a1a; --hl-dk: #8d8d8d;
-    --hl-dim: #c8c8c8; --hl-on: #fff; --edge: transparent;
+    --hl-dim: #c8c8c8; --hl-on: #fff; --edge: transparent; --lift: none;
+    --grain-op: 0; --aura-1: transparent; --aura-2: transparent;
     --ac-dim: #c8c8c8; --text-hi: #000; --display-1: #000; --display-2: #000;
     --line: #c8c8c8; --line-2: #c8c8c8;
   }
@@ -587,6 +662,13 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .metrics-grid > div { border: 0; padding: 0; text-align: left; }
   .metrics dd { font-size: 18pt; color: #000; }
   .tags li { border-color: #c8c8c8; padding: .1rem .35rem; }
+  .experience {
+    background: #fff; color: #000; box-shadow: none;
+    --text: #000; --text-2: #1f1f1f; --text-3: #3a3a3a;
+    --ac: #333; --ac-dk: #8d8d8d;
+    --hl: #1a1a1a; --hl-lt: #1a1a1a; --hl-hi: #1a1a1a; --hl-dk: #8d8d8d;
+    --line: #c8c8c8; --line-2: #c8c8c8; --bg-1: #fff; --edge: transparent; --lift: none;
+  }
   .cap, .rail > li, .cred { break-inside: avoid; page-break-inside: avoid; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8.5pt; color: #3a3a3a; word-break: break-all; }
   .identity a::after, .c-link[href^="mailto"]::after { content: none; }

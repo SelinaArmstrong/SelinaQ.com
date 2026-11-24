@@ -502,11 +502,16 @@ footer { border-top: 1px solid var(--line); background: var(--bg); }
   .site-header, .skip-link, .actions, .status-pill, .copy,
   .case-media, footer .up { display: none !important; }
   .js .rise, .js .reveal, .js .rise-y { opacity: 1 !important; transform: none !important; }
+  .js.is-ready .display::after { display: none; }   /* the redline sweep */
   .shell { width: 100%; }
   .hero { padding-top: 0; }
   .hero-copy { text-align: left; }
   .display { font-size: 30pt; margin-top: .3rem; }
-  .display .muted { color: #000; -webkit-text-fill-color: #000; }
+  /* gradient-clipped text: the gradient box itself prints, so clear it */
+  .display .muted, .contact h2 em {
+    background: none; -webkit-background-clip: border-box; background-clip: border-box;
+    color: #000; -webkit-text-fill-color: #000;
+  }
   .lede, .hero-meta { margin-left: 0; margin-right: 0; max-width: none; text-align: left; justify-content: flex-start; }
   .kicker::before, .kicker::after, .eyebrow i { display: none; }
   .kicker, .eyebrow, .case-num span, .cap-no, .yr { color: #000; }
@@ -514,7 +519,6 @@ footer { border-top: 1px solid var(--line); background: var(--bg); }
   .sec-head h2, .exp-head h2, .contact h2 { font-size: 16pt; margin-top: .4rem; }
   .contact { text-align: left; padding-block: 1.2rem; }
   .contact-inner { justify-items: start; }
-  .contact h2 em { color: #000; -webkit-text-fill-color: #000; }
   .contact-links { justify-content: flex-start; }
   .exp-grid, .cap-grid, .credentials, .case { display: block; }
   .cap, .case + .case { border: 0; padding: 0; margin-top: .9rem; }
@@ -522,7 +526,7 @@ footer { border-top: 1px solid var(--line); background: var(--bg); }
   .metrics-grid > div { border: 0; padding: 0; text-align: left; }
   .metrics dd { font-size: 18pt; color: #000; }
   .tags li { border-color: #c8c8c8; padding: .1rem .35rem; }
-  .case, .cap, .rail > li, .cred { break-inside: avoid; page-break-inside: avoid; }
+  .cap, .rail > li, .cred { break-inside: avoid; page-break-inside: avoid; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8.5pt; color: #3a3a3a; word-break: break-all; }
   .identity a::after, .c-link[href^="mailto"]::after { content: none; }
 }

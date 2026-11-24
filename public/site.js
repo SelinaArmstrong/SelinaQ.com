@@ -13,6 +13,9 @@ requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add("is-r
 const header = document.querySelector("#siteHeader");
 const bar = document.querySelector(".progress i");
 const parallax = [...document.querySelectorAll("[data-parallax]")];
+const rail = document.querySelector(".rail");
+const heroCopy = document.querySelector(".hero-copy");
+const clamp01 = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
 let ticking = false;
 
 function onScroll() {
@@ -22,6 +25,20 @@ function onScroll() {
   header.classList.toggle("is-stuck", y > 24);
 
   if (!calm.matches) {
+    /* the timeline draws itself at the pace you read it */
+    if (rail) {
+      const r = rail.getBoundingClientRect();
+      const readLine = window.innerHeight * 0.62;
+      rail.style.setProperty("--rail", clamp01((readLine - r.top) / r.height).toFixed(3));
+    }
+
+    /* the hero recedes on the way out instead of just sliding off */
+    if (heroCopy) {
+      const h = window.innerHeight;
+      heroCopy.style.setProperty(
+        "--hero-fade", (1 - clamp01((y - h * 0.1) / (h * 0.55)) * 0.85).toFixed(3));
+    }
+
     for (const el of parallax) {
       const rect = el.getBoundingClientRect();
       if (rect.bottom < -200 || rect.top > window.innerHeight + 200) continue;
@@ -37,7 +54,13 @@ function onScroll() {
 window.addEventListener("scroll", () => {
   if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
 }, { passive: true });
-window.addEventListener("resize", () => { sweep(); sweepCounters(); }, { passive: true });
+let resizeTimer;
+window.addEventListener("resize", () => {
+  sweep();
+  sweepCounters();
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(splitHeadings, 180);
+}, { passive: true });
 
 /* ── reveal on scroll ───────────────────────────────────────────────
    A plain scroll sweep rather than IntersectionObserver: an observer can
@@ -55,6 +78,36 @@ function sweep() {
     }
   }
 }
+
+/* ── headings arrive line by line ───────────────────────────────────
+   Each <br>-separated segment becomes its own masked line. If a segment
+   wraps at the current width the mask would clip it, so that heading is
+   put back exactly as authored. Re-checked on resize. */
+const headings = [...document.querySelectorAll(".sec-head h2, .exp-head h2, .contact h2")]
+  .map((el) => ({ el, html: el.innerHTML }));
+
+function splitHeadings() {
+  for (const { el, html } of headings) {
+    el.innerHTML = html;
+    el.classList.remove("split");
+    if (calm.matches) continue;
+
+    const parts = html.split(/<br\s*\/?>/i);
+    el.innerHTML = parts
+      .map((part, i) => `<span class="line"><span style="--l:${i}">${part}</span></span>`)
+      .join("");
+    el.classList.add("split");
+
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
+    const clipped = [...el.querySelectorAll(".line")]
+      .some((line) => line.getBoundingClientRect().height > lineHeight * 1.45);
+    if (clipped) {
+      el.innerHTML = html;
+      el.classList.remove("split");
+    }
+  }
+}
+splitHeadings();
 
 /* ── metric counters ───────────────────────────────────────────────── */
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
@@ -88,6 +141,14 @@ function sweepCounters() {
   }
 }
 
+/* printing mid-count would put a half-finished figure on paper */
+window.addEventListener("beforeprint", () => {
+  for (const el of document.querySelectorAll("[data-count]")) {
+    el.textContent = el.dataset.count;
+    counters.delete(el);
+  }
+});
+
 /* ── active section in the nav ─────────────────────────────────────── */
 const navLinks = [...document.querySelectorAll(".primary-nav a[href^='#']")];
 const sections = navLinks
@@ -116,6 +177,15 @@ if (fine.matches && !calm.matches) {
     el.addEventListener("pointerleave", () => {
       el.style.setProperty("--mx", "0px");
       el.style.setProperty("--my", "0px");
+    });
+  });
+
+  /* ── pointer-tracked light on the capability cards ───────────────── */
+  document.querySelectorAll(".cap").forEach((el) => {
+    el.addEventListener("pointermove", (event) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--px", `${event.clientX - r.left}px`);
+      el.style.setProperty("--py", `${event.clientY - r.top}px`);
     });
   });
 

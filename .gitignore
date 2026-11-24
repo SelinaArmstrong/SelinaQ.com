@@ -13,3 +13,6 @@
 # local tooling / preview
 .claude/settings.local.json
 node_modules/
+
+# palette comparison renders (regenerate from design/ when needed)
+design/palettes/

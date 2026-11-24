@@ -1,83 +1,164 @@
 /* selinaq.com — motion & interaction
-   Everything here is progressive enhancement: without JS the page is fully readable,
-   and every motion effect is disabled under prefers-reduced-motion. */
+   Progressive enhancement: without JS the page is fully readable, and every
+   motion effect is switched off under prefers-reduced-motion.
+
+   Scrolling is the hot path, so nothing inside it reads layout. Positions are
+   measured once (and again on resize, load and font swap); the scroll handler
+   only does arithmetic. */
 
 const root = document.documentElement;
 const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
 const fine = window.matchMedia("(pointer: fine)");
+const mobile = window.matchMedia("(max-width: 760px)");
+const clamp01 = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
 
 /* ── entrance choreography ─────────────────────────────────────────── */
 requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add("is-ready")));
 
-/* ── scroll progress + sticky header ───────────────────────────────── */
+/* ── cached page metrics ───────────────────────────────────────────── */
 const header = document.querySelector("#siteHeader");
 const bar = document.querySelector(".progress i");
-const parallax = [...document.querySelectorAll("[data-parallax]")];
 const rail = document.querySelector(".rail");
 const heroCopy = document.querySelector(".hero-copy");
-const clamp01 = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
+const parallax = [...document.querySelectorAll("[data-parallax]")].map((el) => ({
+  el,
+  rate: parseFloat(el.dataset.parallax) || 0.1,
+  top: 0,
+  height: 0,
+}));
+
+let viewportH = window.innerHeight;
+let maxScroll = 1;
+let railTop = 0;
+let railHeight = 1;
+
+function measure() {
+  viewportH = window.innerHeight;
+  maxScroll = Math.max(root.scrollHeight - viewportH, 1);
+
+  if (rail) {
+    const r = rail.getBoundingClientRect();
+    railTop = r.top + window.scrollY;
+    railHeight = Math.max(r.height, 1);
+  }
+  for (const item of parallax) {
+    const r = item.el.getBoundingClientRect();
+    item.top = r.top + window.scrollY;
+    item.height = r.height;
+  }
+}
+
+/* ── scroll handler: arithmetic only ───────────────────────────────── */
 let ticking = false;
 
 function onScroll() {
-  const y = window.scrollY;
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  if (bar) bar.style.setProperty("--p", max > 0 ? (y / max).toFixed(4) : 0);
-  header.classList.toggle("is-stuck", y > 24);
-
-  if (!calm.matches) {
-    /* the timeline draws itself at the pace you read it */
-    if (rail) {
-      const r = rail.getBoundingClientRect();
-      const readLine = window.innerHeight * 0.62;
-      rail.style.setProperty("--rail", clamp01((readLine - r.top) / r.height).toFixed(3));
-    }
-
-    /* the hero recedes on the way out instead of just sliding off */
-    if (heroCopy) {
-      const h = window.innerHeight;
-      heroCopy.style.setProperty(
-        "--hero-fade", (1 - clamp01((y - h * 0.1) / (h * 0.55)) * 0.85).toFixed(3));
-    }
-
-    for (const el of parallax) {
-      const rect = el.getBoundingClientRect();
-      if (rect.bottom < -200 || rect.top > window.innerHeight + 200) continue;
-      const rate = parseFloat(el.dataset.parallax) || 0.1;
-      const offset = (rect.top + rect.height / 2 - window.innerHeight / 2) * rate;
-      el.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0) scale(1.06)`;
-    }
-  }
-  sweep();
-  sweepCounters();
   ticking = false;
+  const y = window.scrollY;
+
+  if (bar) bar.style.setProperty("--p", (y / maxScroll).toFixed(4));
+  header.classList.toggle("is-stuck", y > 24);
+  if (calm.matches) return;
+
+  /* the timeline is drawn at the pace you read it */
+  if (rail) {
+    rail.style.setProperty(
+      "--rail", clamp01((y + viewportH * 0.62 - railTop) / railHeight).toFixed(3));
+  }
+
+  /* the hero recedes on its way out instead of just sliding off */
+  if (heroCopy) {
+    heroCopy.style.setProperty(
+      "--hero-fade", (1 - clamp01((y - viewportH * 0.1) / (viewportH * 0.55)) * 0.85).toFixed(3));
+  }
+
+  for (const item of parallax) {
+    const top = item.top - y;
+    if (top + item.height < -200 || top > viewportH + 200) continue;
+    const offset = (top + item.height / 2 - viewportH / 2) * item.rate;
+    item.el.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0) scale(1.06)`;
+  }
 }
-window.addEventListener("scroll", () => {
-  if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
-}, { passive: true });
-let resizeTimer;
-window.addEventListener("resize", () => {
-  sweep();
-  sweepCounters();
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(splitHeadings, 180);
-}, { passive: true });
+
+function requestTick() {
+  if (!ticking) {
+    ticking = true;
+    requestAnimationFrame(onScroll);
+  }
+}
+window.addEventListener("scroll", requestTick, { passive: true });
 
 /* ── reveal on scroll ───────────────────────────────────────────────
-   A plain scroll sweep rather than IntersectionObserver: an observer can
-   miss elements that fly past between frames (fast flick scrolling, or an
-   in-page anchor jump), which would leave them invisible for good. */
-const pending = new Set(document.querySelectorAll(".reveal, .rail"));
+   An observer does the work, because it costs nothing per frame. A sweep
+   runs once after scrolling settles to catch anything that flew past
+   between frames — a flick scroll, or an in-page anchor jump. */
+const pending = new Set(document.querySelectorAll(".reveal"));
+const counters = new Set(document.querySelectorAll("[data-count]"));
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+function reveal(el) {
+  el.classList.add("in");
+  pending.delete(el);
+  watcher.unobserve(el);
+}
+
+function countUp(el) {
+  const target = parseFloat(el.dataset.count);
+  const duration = parseInt(el.dataset.dur, 10) || 1000;
+  counters.delete(el);
+  countWatcher.unobserve(el);
+  if (calm.matches || !Number.isFinite(target)) {
+    el.textContent = target;
+    return;
+  }
+  const start = performance.now();
+  const step = (now) => {
+    const t = Math.min((now - start) / duration, 1);
+    el.textContent = Math.round(target * easeOut(t));
+    if (t < 1) requestAnimationFrame(step);
+  };
+  el.textContent = "0";
+  requestAnimationFrame(step);
+}
+
+const watcher = new IntersectionObserver((entries) => {
+  for (const entry of entries) if (entry.isIntersecting) reveal(entry.target);
+}, { rootMargin: "0px 0px -8% 0px" });
+
+const countWatcher = new IntersectionObserver((entries) => {
+  for (const entry of entries) if (entry.isIntersecting) countUp(entry.target);
+}, { threshold: 0.5 });
+
+pending.forEach((el) => watcher.observe(el));
+counters.forEach((el) => countWatcher.observe(el));
 
 function sweep() {
-  if (!pending.size) return;
-  const line = window.innerHeight * 0.88;
-  for (const el of pending) {
-    if (el.getBoundingClientRect().top < line) {
-      el.classList.add("in");
-      pending.delete(el);
+  if (pending.size) {
+    const line = viewportH * 0.92;
+    for (const el of [...pending]) {
+      if (el.getBoundingClientRect().top < line) reveal(el);
+    }
+  }
+  if (counters.size) {
+    const line = viewportH * 0.85;
+    for (const el of [...counters]) {
+      const rect = el.getBoundingClientRect();
+      if (rect.top > line) continue;
+      if (rect.bottom < 0) {
+        counters.delete(el);
+        countWatcher.unobserve(el);
+        el.textContent = el.dataset.count;   /* scrolled past already: no animation */
+      } else {
+        countUp(el);
+      }
     }
   }
 }
+
+let settleTimer;
+window.addEventListener("scroll", () => {
+  clearTimeout(settleTimer);
+  settleTimer = setTimeout(sweep, 120);
+}, { passive: true });
 
 /* ── headings arrive line by line ───────────────────────────────────
    Each <br>-separated segment becomes its own masked line. If a segment
@@ -107,39 +188,18 @@ function splitHeadings() {
     }
   }
 }
-splitHeadings();
 
-/* ── metric counters ───────────────────────────────────────────────── */
-const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-
-function countUp(el) {
-  const target = parseFloat(el.dataset.count);
-  const duration = parseInt(el.dataset.dur, 10) || 1000;
-  if (calm.matches || !Number.isFinite(target)) { el.textContent = target; return; }
-  const start = performance.now();
-  const step = (now) => {
-    const t = Math.min((now - start) / duration, 1);
-    el.textContent = Math.round(target * easeOut(t));
-    if (t < 1) requestAnimationFrame(step);
-  };
-  el.textContent = "0";
-  requestAnimationFrame(step);
-}
-
-const counters = new Set(document.querySelectorAll("[data-count]"));
-
-function sweepCounters() {
-  if (!counters.size) return;
-  const line = window.innerHeight * 0.85;
-  for (const el of counters) {
-    const rect = el.getBoundingClientRect();
-    if (rect.top > line) continue;
-    counters.delete(el);
-    /* already scrolled past: show the final figure, don't animate */
-    if (rect.bottom < 0) el.textContent = el.dataset.count;
-    else countUp(el);
-  }
-}
+/* ── re-measure whenever the page can have changed shape ───────────── */
+let resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    splitHeadings();
+    measure();
+    sweep();
+    onScroll();
+  }, 160);
+}, { passive: true });
 
 /* printing mid-count would put a half-finished figure on paper */
 window.addEventListener("beforeprint", () => {
@@ -166,7 +226,7 @@ if (sections.length) {
   sections.forEach((s) => spy.observe(s));
 }
 
-/* ── magnetic buttons ──────────────────────────────────────────────── */
+/* ── pointer flourishes (fine pointers only) ───────────────────────── */
 if (fine.matches && !calm.matches) {
   document.querySelectorAll("[data-magnetic]").forEach((el) => {
     el.addEventListener("pointermove", (event) => {
@@ -180,7 +240,6 @@ if (fine.matches && !calm.matches) {
     });
   });
 
-  /* ── pointer-tracked light on the capability cards ───────────────── */
   document.querySelectorAll(".cap").forEach((el) => {
     el.addEventListener("pointermove", (event) => {
       const r = el.getBoundingClientRect();
@@ -189,7 +248,6 @@ if (fine.matches && !calm.matches) {
     });
   });
 
-  /* ── pointer tilt on project media ───────────────────────────────── */
   document.querySelectorAll("[data-tilt]").forEach((el) => {
     el.addEventListener("pointermove", (event) => {
       const r = el.getBoundingClientRect();
@@ -203,52 +261,79 @@ if (fine.matches && !calm.matches) {
   });
 }
 
-/* ── copy email ────────────────────────────────────────────────────── */
-const copyStatus = document.querySelector("#copyStatus");
-
-document.querySelectorAll("[data-copy]").forEach((button) => {
-  const label = button.querySelector(".copy-text");
-  button.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(button.dataset.copy);
-      button.classList.add("done");
-      if (label) label.textContent = "Copied";
-      if (copyStatus) copyStatus.textContent = `${button.dataset.copy} copied to clipboard`;
-      setTimeout(() => {
-        button.classList.remove("done");
-        if (label) label.textContent = "Copy";
-        if (copyStatus) copyStatus.textContent = "";
-      }, 2000);
-    } catch {
-      window.location.href = `mailto:${button.dataset.copy}`;
-    }
-  });
-});
-
-/* ── mobile navigation ─────────────────────────────────────────────── */
+/* ── mobile navigation ─────────────────────────────────────────────
+   A full sheet rather than a few links crammed under the masthead:
+   large targets, the page behind it held still, focus kept inside, and
+   Escape or any link closes it. */
 const menuButton = document.querySelector(".menu-toggle");
-const navigation = document.querySelector("#primary-nav");
-const mobile = window.matchMedia("(max-width: 760px)");
+const sheet = document.querySelector("#primary-nav");
 
-if (menuButton && navigation) {
-  const close = () => menuButton.setAttribute("aria-expanded", "false");
-  menuButton.hidden = false;
-  menuButton.addEventListener("click", () => {
-    const open = menuButton.getAttribute("aria-expanded") === "true";
-    menuButton.setAttribute("aria-expanded", String(!open));
+if (menuButton && sheet) {
+  let lastFocus = null;
+  const isOpen = () => menuButton.getAttribute("aria-expanded") === "true";
+
+  const label = menuButton.querySelector(".menu-label");
+
+  const setOpen = (open) => {
+    menuButton.setAttribute("aria-expanded", String(open));
+    root.classList.toggle("nav-open", open);
+    if (label) label.textContent = open ? "Close" : "Menu";
+    /* Focus stays on the toggle, which is the first stop in the trap below:
+       moving it into the sheet while the sheet is still visibility:hidden is
+       a silent no-op, and jumping the caret is jarring either way. */
+    if (open) {
+      lastFocus = document.activeElement;
+    } else if (lastFocus) {
+      lastFocus.focus({ preventScroll: true });
+      lastFocus = null;
+    }
+  };
+
+  const syncToViewport = () => {
+    menuButton.hidden = !mobile.matches;
+    if (!mobile.matches) {
+      menuButton.setAttribute("aria-expanded", "false");
+      root.classList.remove("nav-open");
+      if (label) label.textContent = "Menu";
+    }
+  };
+
+  syncToViewport();
+  mobile.addEventListener("change", syncToViewport);
+  menuButton.addEventListener("click", () => setOpen(!isOpen()));
+
+  sheet.addEventListener("click", (event) => {
+    if (mobile.matches && event.target.closest("a")) setOpen(false);
   });
-  navigation.addEventListener("click", (event) => {
-    if (mobile.matches && event.target.closest("a")) close();
-  });
+
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && menuButton.getAttribute("aria-expanded") === "true") {
-      close();
-      menuButton.focus();
+    if (!isOpen()) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false);
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = [menuButton, ...sheet.querySelectorAll("a, button")];
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
     }
   });
-  mobile.addEventListener("change", close);
 }
 
 /* ── first pass ────────────────────────────────────────────────────── */
+splitHeadings();
+measure();
 onScroll();
-window.addEventListener("load", onScroll);
+sweep();
+
+window.addEventListener("load", () => { measure(); onScroll(); sweep(); });
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => { measure(); onScroll(); });
+}

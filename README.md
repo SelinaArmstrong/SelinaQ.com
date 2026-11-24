@@ -1,5 +1,7 @@
 # selinaq.com
 
+<https://github.com/SelinaArmstrong/SelinaQ.com>
+
 Personal site for Selina Armstrong — Senior Contract Specialist.
 Static, hand-built: no framework, no build step, no dependencies.
 
@@ -43,6 +45,12 @@ Per-host notes, since `404.html` and clean URLs are handled differently:
 
 A custom domain needs a `CNAME` file in `public/` on GitHub Pages; the other
 hosts set the domain in their dashboard.
+
+## Analytics
+
+`index.html` carries a commented GA4 block at the end of `<head>`. Drop the
+measurement ID in and uncomment it; nothing else on the page depends on it,
+and no other third-party script is loaded.
 
 ## Things to keep in sync by hand
 

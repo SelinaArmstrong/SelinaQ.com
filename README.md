@@ -17,6 +17,8 @@ public/          ← the deploy root. Everything that ships lives here.
   sitemap.xml
   Selina-Armstrong-Resume.pdf
   assets/        ← images, the Geist woff2 subset, monogram, OG card
+content/         ← the master resume (.docx). Source of truth for every
+                   claim on the page. NOT deployed.
 design/          ← visual-direction studies. NOT deployed.
 .claude/         ← local preview config for Claude Code. NOT deployed.
 ```
@@ -58,7 +60,10 @@ and no other third-party script is loaded.
 - `assets/selina-armstrong.jpg` — the 1200×630 Open Graph card. It is generated
   from an HTML template, not photographed; regenerate it if the name, title or
   palette changes.
-- `Selina-Armstrong-Resume.pdf` — maintained separately from this site.
+- `Selina-Armstrong-Resume.pdf` — exported from
+  `content/Selina-Armstrong-Resume-master.docx`, which is the baseline for the
+  wording on the page. When the master changes, re-check the hero line, the
+  metrics, Capabilities, the timeline bullets and the project tags against it.
 
 ## Accessibility and motion
 

@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# editors
+*.swp
+*~
+.vscode/
+.idea/
+
+# local tooling / preview
+.claude/settings.local.json
+node_modules/

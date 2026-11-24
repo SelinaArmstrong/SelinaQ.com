@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SelinaQ.com — three visual directions, compared</title>
+<style>
+@font-face{font-family:Geist;src:url("../public/assets/fonts/geist.woff2") format("woff2");font-weight:400 800;font-style:normal;font-display:swap}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:4.2rem}
+body{margin:0;font-family:Geist,"Helvetica Neue",Arial,sans-serif;background:#111}
+h1,h2,h3,h4,p,dl,dd,dt,ul,figure{margin:0}
+ul{padding:0;list-style:none}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+
+/* ============ comparison shell ============ */
+.switcher{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;gap:.9rem;
+  padding:.62rem clamp(.9rem,3vw,1.6rem);background:#0c0c0ef2;backdrop-filter:blur(12px);
+  border-bottom:1px solid #26262c;color:#e9e7e2;font-size:.78rem;letter-spacing:.02em}
+.switcher strong{font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.68rem;color:#8d8a84}
+.switcher a{padding:.36rem .72rem;border:1px solid #33333a;border-radius:2rem;color:#d7d4ce;transition:.18s}
+.switcher a:hover{background:#1d1d22;color:#fff;border-color:#55555f}
+.switcher .sp{margin-left:auto;color:#6e6b66;font-size:.72rem}
+.plate{position:relative;padding-top:3.1rem}
+.plate-tag{position:sticky;top:3.1rem;z-index:20;display:flex;align-items:baseline;gap:.8rem;
+  padding:.5rem clamp(.9rem,3vw,1.6rem);background:#141418;color:#9b9790;
+  font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;border-block:1px solid #26262c}
+.plate-tag b{color:#fff;letter-spacing:.1em;font-size:.78rem}
+.plate-tag span{letter-spacing:0;text-transform:none;font-size:.74rem;color:#75726c}
+
+/* ============ shared structure ============ */
+.v{--shell:77rem}
+.shell{width:min(90%,var(--shell));margin-inline:auto}
+.v a{color:inherit}
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:2rem;min-height:4.6rem}
+.mark{display:inline-flex;align-items:center;gap:.6rem;font-weight:600;letter-spacing:-.03em;font-size:1rem}
+.nav{display:flex;gap:1.9rem;font-size:.82rem}
+.lbl{font-size:.68rem;font-weight:600;letter-spacing:.17em;text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:2.9rem;padding:.7rem 1.3rem;
+  font-size:.85rem;font-weight:550;letter-spacing:-.005em;border:1px solid transparent;transition:.2s}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr)}
+.mgrid dd{font-variant-numeric:lining-nums tabular-nums}
+.proj{display:grid;gap:clamp(2rem,4vw,3.6rem);align-items:center}
+.sec{padding-block:clamp(3.4rem,6vw,6rem)}
+
+/* =================================================================
+   A — ARCHIVE / paper stock
+   ================================================================= */
+.v-a{--bg:#F4F1EA;--ink:#17181B;--soft:#5E5C55;--rule:#D6D1C4;--accent:#7B2D26;--card:#FBF9F4;
+  background:var(--bg);color:var(--ink)}
+.v-a .hdr{border-bottom:1px solid var(--rule)}
+.v-a .mark-dot{width:.52rem;height:.52rem;background:var(--accent);border-radius:50%}
+.v-a .nav{color:var(--soft);letter-spacing:.01em}
+.v-a .nav a:hover{color:var(--accent)}
+.v-a .hero{display:grid;grid-template-columns:1.32fr .88fr;gap:clamp(2.4rem,5vw,5.5rem);
+  padding-block:clamp(3.2rem,6vw,6.2rem);align-items:start}
+.v-a .kick{display:flex;align-items:center;gap:.8rem;color:var(--accent)}
+.v-a .kick::before{content:"";width:2.2rem;height:1px;background:var(--accent)}
+.v-a h1{font-size:clamp(3.5rem,7.4vw,6.6rem);line-height:.93;letter-spacing:-.055em;font-weight:500;margin:1.5rem 0 0}
+.v-a h1 em{font-style:normal;display:block;color:#3B3A36}
+.v-a .lede{max-width:34rem;margin-top:1.9rem;padding-top:1.7rem;border-top:1px solid var(--rule);
+  font-size:1.14rem;line-height:1.62;color:#36352F;letter-spacing:-.012em}
+.v-a .lede b{font-weight:550;color:var(--ink);box-shadow:inset 0 -.42em 0 #7B2D261a}
+.v-a .cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2.1rem}
+.v-a .btn-1{background:var(--ink);color:#F7F5F0;border-radius:1px}
+.v-a .btn-1:hover{background:var(--accent)}
+.v-a .btn-2{border-color:#C6C0B1;color:var(--ink);border-radius:1px}
+.v-a .btn-2:hover{border-color:var(--ink)}
+.v-a .dossier{background:var(--card);border:1px solid var(--rule);box-shadow:0 1px 0 #ffffff inset,0 18px 40px -28px #4a443220}
+.v-a .dossier-h{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1.15rem;
+  border-bottom:1px solid var(--rule);color:var(--soft)}
+.v-a .dossier-h span{color:#A39C8B;letter-spacing:.1em}
+.v-a .dossier dl{display:grid;grid-template-columns:7.2rem 1fr}
+.v-a .dossier dt{padding:.78rem 0 .78rem 1.15rem;color:#8C8778;font-size:.7rem;font-weight:600;
+  letter-spacing:.13em;text-transform:uppercase;border-bottom:1px solid #E6E1D5}
+.v-a .dossier dd{padding:.72rem 1.15rem .72rem 0;font-size:.92rem;line-height:1.5;border-bottom:1px solid #E6E1D5}
+.v-a .dossier dl > :nth-last-child(-n+2){border-bottom:0}
+.v-a .dossier .ok{display:inline-flex;align-items:center;gap:.45rem;color:#2E5B3C;font-weight:550}
+.v-a .dossier .ok::before{content:"";width:.45rem;height:.45rem;border-radius:50%;background:#3E7A51}
+.v-a .metrics{border-block:1px solid var(--rule);padding-block:2.4rem}
+.v-a .mgrid div{padding-right:8%}
+.v-a .mgrid dt{color:var(--accent);margin-bottom:1rem;padding-top:.9rem;border-top:2px solid var(--accent);
+  font-size:.67rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase}
+.v-a .mgrid dd{font-size:clamp(2.6rem,4vw,3.5rem);line-height:1;letter-spacing:-.06em;font-weight:400}
+.v-a .mgrid dd small{font-size:.32em;letter-spacing:.02em;color:var(--soft);margin-left:.45em;vertical-align:.5em;font-weight:500}
+.v-a .mgrid dd + p{margin-top:.5rem;font-size:.82rem;color:var(--soft);line-height:1.45}
+.v-a .sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:2rem;
+  padding-bottom:1.2rem;border-bottom:1px solid var(--rule);margin-bottom:clamp(2rem,3.4vw,3.2rem)}
+.v-a .sec-h h2{font-size:clamp(1.6rem,2.3vw,2.1rem);letter-spacing:-.035em;font-weight:500}
+.v-a .sec-h .lbl{color:#9C9686}
+.v-a .proj{grid-template-columns:.95fr 1.05fr}
+.v-a .num{font-size:.78rem;font-weight:600;letter-spacing:.16em;color:var(--accent)}
+.v-a .proj h3{font-size:clamp(1.85rem,2.9vw,2.6rem);letter-spacing:-.042em;font-weight:500;margin:.85rem 0 .9rem}
+.v-a .proj > div > p{color:#45443E;line-height:1.62;max-width:30rem}
+.v-a .proj ul{margin-top:1.4rem;border-top:1px solid var(--rule)}
+.v-a .proj li{padding:.72rem 0;border-bottom:1px solid var(--rule);font-size:.89rem;color:#4C4B44;
+  display:grid;grid-template-columns:1.1rem 1fr;gap:.6rem;line-height:1.5}
+.v-a .proj li::before{content:"→";color:var(--accent)}
+.v-a .proj .links{display:flex;gap:1.5rem;margin-top:1.4rem;font-size:.88rem;font-weight:550}
+.v-a .proj .links a{border-bottom:1px solid var(--accent);padding-bottom:.15rem;color:var(--accent)}
+.v-a .shot{position:relative;padding:1rem;background:var(--card);border:1px solid var(--rule)}
+.v-a .shot img{filter:grayscale(.25) contrast(1.02)}
+.v-a .shot figcaption{display:flex;justify-content:space-between;color:#9C9686;margin-top:.8rem;font-size:.68rem;
+  letter-spacing:.12em;text-transform:uppercase}
+.v-a .contact{background:var(--ink);color:#F2EFE8}
+.v-a .contact .shell{display:grid;grid-template-columns:1.25fr .75fr;gap:9%;align-items:end;
+  padding-block:clamp(3.4rem,5.6vw,5.4rem)}
+.v-a .contact h2{font-size:clamp(2.6rem,5vw,4.3rem);line-height:1.02;letter-spacing:-.05em;font-weight:500}
+.v-a .contact p{color:#A9A59C;margin-top:1.1rem;max-width:26rem;line-height:1.6}
+.v-a .contact .cl{display:grid;gap:.9rem;font-size:.95rem}
+.v-a .contact .cl a{border-bottom:1px solid #4A4842;padding-bottom:.5rem}
+.v-a .contact .cl a:hover{border-color:#C6766B;color:#E9B5AC}
+.v-a .contact .cl span{color:#8C887F;font-size:.8rem;line-height:1.55}
+
+/* =================================================================
+   B — NOCTURNE / after dark
+   ================================================================= */
+.v-b{--bg:#0A0A0C;--ink:#F1EEE7;--soft:#99958C;--rule:#232329;--accent:#C2A36B;
+  background:var(--bg);color:var(--ink)}
+.v-b .hdr{border-bottom:1px solid var(--rule)}
+.v-b .mark-dot{width:1.65rem;height:1.65rem;border:1px solid var(--accent);border-radius:50%;
+  display:grid;place-items:center;font-size:.6rem;letter-spacing:.04em;color:var(--accent)}
+.v-b .nav{color:var(--soft)}
+.v-b .nav a:hover{color:var(--accent)}
+.v-b .nav .pill{border:1px solid #3A3A42;padding:.45rem .9rem;border-radius:2rem;color:var(--ink)}
+.v-b .hero{text-align:center;padding-block:clamp(4.2rem,8vw,7.5rem) clamp(2.6rem,4vw,3.6rem)}
+.v-b .kick{display:inline-flex;align-items:center;gap:1rem;color:var(--accent)}
+.v-b .kick::before,.v-b .kick::after{content:"";width:2.4rem;height:1px;background:#6E5F3E}
+.v-b h1{font-size:clamp(3.4rem,8.4vw,7.4rem);line-height:.92;letter-spacing:-.058em;font-weight:500;margin:1.7rem 0 0}
+.v-b h1 em{font-style:normal;color:#B8B3A8}
+.v-b .lede{max-width:40rem;margin:1.9rem auto 0;color:#B5B1A7;font-size:1.1rem;line-height:1.65;letter-spacing:-.01em}
+.v-b .cta{display:flex;justify-content:center;flex-wrap:wrap;gap:.8rem;margin-top:2.3rem}
+.v-b .btn-1{background:var(--accent);color:#17140D;border-radius:2rem;font-weight:600}
+.v-b .btn-1:hover{background:#D7BA85}
+.v-b .btn-2{border-color:#3C3C44;color:var(--ink);border-radius:2rem}
+.v-b .btn-2:hover{border-color:var(--accent);color:var(--accent)}
+.v-b .band{position:relative;height:clamp(13rem,26vw,21rem);overflow:hidden;border-block:1px solid var(--rule)}
+.v-b .band img{width:100%;height:100%;object-fit:cover;object-position:50% 46%;
+  filter:grayscale(1) contrast(1.12) brightness(.72);mix-blend-mode:luminosity}
+.v-b .band::after{content:"";position:absolute;inset:0;background:
+  linear-gradient(90deg,#0A0A0C 2%,#0a0a0c00 32%,#0a0a0c00 68%,#0A0A0C 98%),
+  linear-gradient(#0a0a0c99,#0a0a0c22 45%,#0A0A0C)}
+.v-b .metrics{padding-block:clamp(2.6rem,4vw,3.6rem)}
+.v-b .mgrid div{text-align:center;padding-inline:4%;border-left:1px solid var(--rule)}
+.v-b .mgrid div:first-child{border-left:0}
+.v-b .mgrid dd{font-size:clamp(2.5rem,4vw,3.4rem);line-height:1;letter-spacing:-.055em;font-weight:300;color:#FBF8F1}
+.v-b .mgrid dd small{font-size:.3em;color:var(--accent);margin-left:.3em;vertical-align:.55em;letter-spacing:.04em;font-weight:500}
+.v-b .mgrid dt{margin-top:.9rem;color:var(--soft);font-size:.74rem;line-height:1.45;letter-spacing:.015em}
+.v-b .sec-h{text-align:center;margin-bottom:clamp(2.2rem,4vw,3.4rem)}
+.v-b .sec-h .lbl{color:var(--accent)}
+.v-b .sec-h h2{font-size:clamp(2rem,3.4vw,3rem);letter-spacing:-.045em;font-weight:500;margin-top:.9rem}
+.v-b .proj{grid-template-columns:1.05fr .95fr}
+.v-b .num{color:var(--accent);font-size:.78rem;font-weight:600;letter-spacing:.16em}
+.v-b .proj h3{font-size:clamp(1.9rem,3vw,2.7rem);letter-spacing:-.045em;font-weight:500;margin:.8rem 0 .9rem}
+.v-b .proj > div > p{color:#AEAAA0;line-height:1.65;max-width:30rem}
+.v-b .proj ul{margin-top:1.5rem;display:grid;gap:.6rem}
+.v-b .proj li{font-size:.89rem;color:#A5A199;line-height:1.5;padding-left:1.1rem;position:relative}
+.v-b .proj li::before{content:"";position:absolute;left:0;top:.62em;width:.33rem;height:.33rem;
+  background:var(--accent);border-radius:50%}
+.v-b .proj .links{display:flex;gap:1.6rem;margin-top:1.7rem;font-size:.88rem;font-weight:550}
+.v-b .proj .links a{color:var(--accent);border-bottom:1px solid #5E5133;padding-bottom:.2rem}
+.v-b .shot{position:relative;overflow:hidden;border:1px solid var(--rule);background:#111115}
+.v-b .shot img{filter:contrast(1.04) saturate(.85)}
+.v-b .shot::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px #C2A36B1f}
+.v-b .contact{text-align:center;border-top:1px solid var(--rule);padding-block:clamp(3.6rem,6vw,5.8rem)}
+.v-b .contact h2{font-size:clamp(2.8rem,6vw,5rem);letter-spacing:-.05em;font-weight:400;line-height:1.02}
+.v-b .contact h2 b{font-weight:500;color:var(--accent)}
+.v-b .contact p{color:var(--soft);margin:1.2rem auto 0;max-width:30rem;line-height:1.6}
+.v-b .contact .cl{display:flex;justify-content:center;flex-wrap:wrap;gap:1rem 2.2rem;margin-top:2rem;font-size:.95rem}
+.v-b .contact .cl a{border-bottom:1px solid #3C3C44;padding-bottom:.35rem}
+.v-b .contact .cl a:hover{border-color:var(--accent);color:var(--accent)}
+.v-b .contact .cl span{display:block;width:100%;color:#6F6C65;font-size:.8rem;margin-top:.6rem}
+
+/* =================================================================
+   C — GRID / Swiss grid
+   ================================================================= */
+.v-c{--bg:#FFFFFF;--ink:#0E0E0E;--soft:#6A6A6A;--rule:#E3E3E3;--accent:#E2402A;
+  background:var(--bg);color:var(--ink)}
+.v-c .hdr{border-bottom:1px solid var(--ink)}
+.v-c .mark-dot{width:.7rem;height:.7rem;background:var(--accent)}
+.v-c .nav{color:var(--ink);font-size:.78rem;letter-spacing:.01em}
+.v-c .nav a{padding-bottom:.15rem;border-bottom:1px solid transparent}
+.v-c .nav a:hover{border-color:var(--accent);color:var(--accent)}
+.v-c .hero{padding-block:clamp(2.6rem,4.4vw,4.4rem) clamp(2.6rem,4vw,4rem)}
+.v-c .meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--rule)}
+.v-c .meta div{padding:.75rem 1rem .8rem 0}
+.v-c .meta dt{color:var(--soft);font-size:.64rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+.v-c .meta dd{margin-top:.3rem;font-size:.87rem;font-weight:500;letter-spacing:-.01em}
+.v-c .meta dd.hot{color:var(--accent)}
+.v-c h1{font-size:clamp(3.6rem,10.2vw,9rem);line-height:.86;letter-spacing:-.062em;font-weight:600;margin:clamp(1.8rem,3vw,2.8rem) 0 0}
+.v-c h1 em{font-style:normal;color:#9D9D9D}
+.v-c .hero-b{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.6rem,4vw,4rem);
+  margin-top:clamp(1.8rem,3vw,2.6rem);padding-top:1.5rem;border-top:1px solid var(--rule);align-items:start}
+.v-c .lede{font-size:1.22rem;line-height:1.48;letter-spacing:-.022em;font-weight:450;max-width:26rem}
+.v-c .lede mark{background:none;color:var(--accent)}
+.v-c .cta{display:flex;flex-wrap:wrap;gap:.6rem;align-self:end;justify-content:flex-end}
+.v-c .btn-1{background:var(--accent);color:#fff;border-radius:0;font-weight:600}
+.v-c .btn-1:hover{background:var(--ink)}
+.v-c .btn-2{border-color:var(--ink);border-radius:0}
+.v-c .btn-2:hover{background:var(--ink);color:#fff}
+.v-c .metrics{border-top:1px solid var(--ink);padding-block:0}
+.v-c .mgrid div{padding:1.5rem 1rem 1.6rem 0;border-right:1px solid var(--rule)}
+.v-c .mgrid div:last-child{border-right:0}
+.v-c .mgrid dt{color:var(--soft);font-size:.64rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+.v-c .mgrid dd{margin-top:.9rem;font-size:clamp(2.4rem,3.8vw,3.3rem);line-height:1;letter-spacing:-.07em;font-weight:600}
+.v-c .mgrid dd small{font-size:.3em;color:var(--accent);letter-spacing:0;vertical-align:.6em;margin-left:.15em}
+.v-c .sec-h{display:grid;grid-template-columns:1fr 1fr;gap:2rem;border-top:1px solid var(--ink);
+  padding-top:1rem;margin-bottom:2.4rem}
+.v-c .sec-h h2{font-size:clamp(1.5rem,2.2vw,2rem);letter-spacing:-.04em;font-weight:600}
+.v-c .sec-h p{color:var(--soft);font-size:.9rem;line-height:1.5;max-width:24rem}
+.v-c .proj{grid-template-columns:4.5rem 1fr 1fr;gap:clamp(1.2rem,2.6vw,2.4rem);align-items:start;
+  padding-top:1.3rem;border-top:1px solid var(--rule)}
+.v-c .num{font-size:.8rem;font-weight:600;letter-spacing:.06em;color:var(--accent)}
+.v-c .proj h3{font-size:clamp(1.7rem,2.6vw,2.3rem);letter-spacing:-.045em;font-weight:600}
+.v-c .proj > div > p{margin-top:.8rem;color:#3C3C3C;line-height:1.56;font-size:.95rem}
+.v-c .proj ul{margin-top:1.2rem;display:grid;gap:.45rem}
+.v-c .proj li{font-size:.86rem;color:var(--soft);line-height:1.5;display:grid;
+  grid-template-columns:auto 1fr;gap:.6rem}
+.v-c .proj li::before{content:"—";color:var(--accent)}
+.v-c .proj .links{display:flex;gap:1.4rem;margin-top:1.3rem;font-size:.85rem;font-weight:600}
+.v-c .proj .links a{border-bottom:2px solid var(--accent);padding-bottom:.1rem}
+.v-c .shot{border:1px solid var(--rule)}
+.v-c .shot img{filter:grayscale(1) contrast(1.06)}
+.v-c .contact{border-top:1px solid var(--ink);padding-block:clamp(3rem,5vw,4.6rem)}
+.v-c .contact .shell{display:grid;grid-template-columns:1.1fr .9fr;gap:8%;align-items:start}
+.v-c .contact h2{font-size:clamp(2.8rem,6.6vw,5.6rem);line-height:.94;letter-spacing:-.06em;font-weight:600}
+.v-c .contact h2 mark{background:none;color:var(--accent)}
+.v-c .contact p{color:var(--soft);margin-top:1.2rem;max-width:24rem;line-height:1.55}
+.v-c .contact .cl{display:grid;gap:.1rem;border-top:1px solid var(--ink)}
+.v-c .contact .cl a{display:flex;justify-content:space-between;gap:1rem;padding:.85rem 0;
+  border-bottom:1px solid var(--rule);font-size:.95rem;font-weight:500}
+.v-c .contact .cl a span{color:var(--soft);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase}
+.v-c .contact .cl a:hover{color:var(--accent)}
+.v-c .contact .cl > p{font-size:.8rem;margin-top:1rem}
+
+@media(max-width:900px){
+  .v-a .hero,.v-c .hero-b,.v-a .contact .shell,.v-c .contact .shell{grid-template-columns:1fr}
+  .v-a .proj,.v-b .proj{grid-template-columns:1fr}
+  .v-c .proj{grid-template-columns:1fr}
+  .v-c .cta{justify-content:flex-start}
+  .mgrid{grid-template-columns:1fr 1fr;gap:1.4rem 0}
+  .v-c .meta{grid-template-columns:1fr 1fr}
+  .switcher{font-size:.72rem;gap:.5rem}
+  .switcher .sp{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="switcher">
+  <strong>Directions</strong>
+  <a href="#a">A Archive</a>
+  <a href="#b">B Nocturne</a>
+  <a href="#c">C Grid</a>
+  <span class="sp">All sans · Geist only · real copy throughout</span>
+</div>
+
+<!-- ============================== A ============================== -->
+<section class="plate" id="a">
+  <div class="plate-tag"><b>Direction A</b> Archive <span>Ivory + ink black + wine red · editorial asymmetry · archive cards</span></div>
+  <div class="v v-a">
+    <header class="shell hdr">
+      <a class="mark" href="#a"><i class="mark-dot"></i>Selina Armstrong</a>
+      <nav class="nav"><a>Work</a><a>Experience</a><a>Capabilities</a><a>Contact</a></nav>
+    </header>
+
+    <div class="shell hero">
+      <div>
+        <p class="kick lbl">Senior Contract Specialist</p>
+        <h1>Selina<em>Armstrong</em></h1>
+        <p class="lede">Seven years running commercial contracts for a <b>Fortune Global 500</b> industrial group — and now building the systems that run them.</p>
+        <div class="cta">
+          <a class="btn btn-1">Selected work</a>
+          <a class="btn btn-2">Download résumé — PDF</a>
+        </div>
+      </div>
+      <div class="dossier">
+        <div class="dossier-h lbl">Profile <span>REF. SA-2026</span></div>
+        <dl>
+          <dt>Focus</dt><dd>Contract operations · CLM · Procurement governance</dd>
+          <dt>Scale</dt><dd>~500 contracts / yr · USD 35M+ · 200+ suppliers</dd>
+          <dt>Languages</dt><dd>Mandarin (native) · English (drafting &amp; redlining)</dd>
+          <dt>Based</dt><dd>Mountain View, CA · open to Sacramento</dd>
+          <dt>Status</dt><dd><span class="ok">Open to work · no sponsorship required</span></dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <dl class="shell mgrid">
+        <div><dt>Experience</dt><dd>7<small>years</small></dd><p>Enterprise contracting, 2014–2021</p></div>
+        <div><dt>Throughput</dt><dd>~500</dd><p>Contracts managed per year</p></div>
+        <div><dt>Value</dt><dd>$35M<small>+ USD</small></dd><p>Annual contract value</p></div>
+        <div><dt>Network</dt><dd>200<small>+</small></dd><p>Suppliers in the workflow</p></div>
+      </dl>
+    </div>
+
+    <div class="shell sec">
+      <div class="sec-h"><h2>Selected work</h2><span class="lbl">01 / 02</span></div>
+      <div class="proj">
+        <div>
+          <p class="num">01 — INDEPENDENT PROJECT, 2026</p>
+          <h3>ContractLedger AI</h3>
+          <p>A contract operations system that carries an agreement from draft review to renewal — built by the person who used to run the process by hand.</p>
+          <ul>
+            <li>Approval gating before registration; drafts kept separate from executed records.</li>
+            <li>Amendment lineage that preserves the original terms.</li>
+            <li>AI extraction validated against a 15-document ground-truth set, with reviewer override.</li>
+          </ul>
+          <div class="links"><a>Explore the system</a><a>Source on GitHub</a></div>
+        </div>
+        <figure class="shot">
+          <img src="../public/assets/contractledger-dashboard.webp" width="1120" height="778" alt="">
+          <figcaption><span>Contract operations dashboard</span><span>FIG. 01</span></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="contact">
+      <div class="shell">
+        <div>
+          <h2>Let's talk about<br>your contract desk.</h2>
+          <p>Looking for contract operations, procurement, and CLM roles in the Bay Area and Sacramento.</p>
+        </div>
+        <div class="cl">
+          <a>selinaq@live.com</a>
+          <a>linkedin.com/in/selinaarmstrong</a>
+          <span>Authorized to work in the U.S. — no sponsorship required, now or in the future.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== B ============================== -->
+<section class="plate" id="b">
+  <div class="plate-tag"><b>Direction B</b> Nocturne <span>Near-black + warm white + champagne gold · centred symmetry · full-bleed imagery</span></div>
+  <div class="v v-b">
+    <header class="shell hdr">
+      <a class="mark" href="#b"><i class="mark-dot">SA</i>Selina Armstrong</a>
+      <nav class="nav"><a>Work</a><a>Experience</a><a>Capabilities</a><a class="pill">Get in touch</a></nav>
+    </header>
+
+    <div class="shell hero">
+      <p class="kick lbl">Senior Contract Specialist</p>
+      <h1>Selina <em>Armstrong</em></h1>
+      <p class="lede">Seven years running commercial contracts for a Fortune Global 500 industrial group — and now building the systems that run them.</p>
+      <div class="cta">
+        <a class="btn btn-1">Selected work</a>
+        <a class="btn btn-2">Download résumé</a>
+      </div>
+    </div>
+
+    <div class="band">
+      <img src="../public/assets/contract-archive.webp" width="1536" height="1024" alt="">
+    </div>
+
+    <div class="metrics">
+      <dl class="shell mgrid">
+        <div><dd>7</dd><dt>Years in enterprise contracting</dt></div>
+        <div><dd>~500</dd><dt>Contracts managed per year</dt></div>
+        <div><dd>$35M<small>+</small></dd><dt>Annual contract value, USD</dt></div>
+        <div><dd>200<small>+</small></dd><dt>Suppliers in the workflow</dt></div>
+      </dl>
+    </div>
+
+    <div class="shell sec">
+      <div class="sec-h">
+        <p class="lbl">Selected work</p>
+        <h2>Two projects, one discipline.</h2>
+      </div>
+      <div class="proj">
+        <figure class="shot">
+          <img src="../public/assets/contractledger-dashboard.webp" width="1120" height="778" alt="">
+        </figure>
+        <div>
+          <p class="num">01 — INDEPENDENT PROJECT, 2026</p>
+          <h3>ContractLedger AI</h3>
+          <p>A contract operations system that carries an agreement from draft review to renewal — built by the person who used to run the process by hand.</p>
+          <ul>
+            <li>Approval gating before registration; drafts kept separate from executed records.</li>
+            <li>Amendment lineage that preserves the original terms.</li>
+            <li>AI extraction validated against a 15-document ground-truth set.</li>
+          </ul>
+          <div class="links"><a>Explore the system</a><a>Source on GitHub</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact">
+      <div class="shell">
+        <h2>Get in <b>touch.</b></h2>
+        <p>Looking for contract operations, procurement, and CLM roles in the Bay Area and Sacramento.</p>
+        <div class="cl">
+          <a>selinaq@live.com</a>
+          <a>LinkedIn</a>
+          <a>GitHub</a>
+          <span>Mountain View, CA · Authorized to work in the U.S., no sponsorship required.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== C ============================== -->
+<section class="plate" id="c">
+  <div class="plate-tag"><b>Direction C</b> Grid <span>Pure white + carbon black + vermilion · strict left alignment · tabular information</span></div>
+  <div class="v v-c">
+    <header class="shell hdr">
+      <a class="mark" href="#c"><i class="mark-dot"></i>Selina Armstrong</a>
+      <nav class="nav"><a>Work</a><a>Experience</a><a>Capabilities</a><a>Contact</a></nav>
+    </header>
+
+    <div class="shell hero">
+      <dl class="meta">
+        <div><dt>Role</dt><dd>Senior Contract Specialist</dd></div>
+        <div><dt>Based</dt><dd>Mountain View, California</dd></div>
+        <div><dt>Status</dt><dd class="hot">Open to work — Feb 2026</dd></div>
+        <div><dt>Work authorization</dt><dd>U.S. — no sponsorship</dd></div>
+      </dl>
+      <h1>Selina<br><em>Armstrong</em></h1>
+      <div class="hero-b">
+        <p class="lede">Seven years running commercial contracts for a Fortune Global 500 industrial group — <mark>and now building the systems that run them.</mark></p>
+        <div class="cta">
+          <a class="btn btn-1">Selected work</a>
+          <a class="btn btn-2">Résumé, PDF</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <dl class="shell mgrid">
+        <div><dt>Experience</dt><dd>7<small>yrs</small></dd></div>
+        <div><dt>Contracts / year</dt><dd>~500</dd></div>
+        <div><dt>Annual value</dt><dd>$35M<small>+</small></dd></div>
+        <div><dt>Suppliers</dt><dd>200<small>+</small></dd></div>
+      </dl>
+    </div>
+
+    <div class="shell sec">
+      <div class="sec-h">
+        <h2>Selected work</h2>
+        <p>Two projects that draw on seven years of contract administration and legal research.</p>
+      </div>
+      <div class="proj">
+        <p class="num">01</p>
+        <div>
+          <h3>ContractLedger AI</h3>
+          <p>A contract operations system that carries an agreement from draft review to renewal — built by the person who used to run the process by hand.</p>
+          <ul>
+            <li>Approval gating before registration; drafts separate from executed records.</li>
+            <li>Amendment lineage that preserves the original terms.</li>
+            <li>AI extraction validated against a 15-document ground-truth set.</li>
+          </ul>
+          <div class="links"><a>Explore the system</a><a>GitHub</a></div>
+        </div>
+        <figure class="shot">
+          <img src="../public/assets/contractledger-dashboard.webp" width="1120" height="778" alt="">
+        </figure>
+      </div>
+    </div>
+
+    <div class="contact">
+      <div class="shell">
+        <div>
+          <h2>Get in <mark>touch.</mark></h2>
+          <p>Looking for contract operations, procurement, and CLM roles in the Bay Area and Sacramento.</p>
+        </div>
+        <div class="cl">
+          <a>selinaq@live.com <span>Email</span></a>
+          <a>selinaarmstrong <span>LinkedIn</span></a>
+          <a>SelinaArmstrong <span>GitHub</span></a>
+          <p>Authorized to work in the U.S. — no sponsorship required.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

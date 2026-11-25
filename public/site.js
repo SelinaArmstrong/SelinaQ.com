@@ -20,7 +20,6 @@ const header = document.querySelector("#siteHeader");
 const bar = document.querySelector(".progress i");
 const rail = document.querySelector(".rail");
 const heroCopy = document.querySelector(".hero-copy");
-const cue = document.querySelector(".scroll-cue");
 
 let viewportH = window.innerHeight;
 let maxScroll = 1;
@@ -54,9 +53,6 @@ function onScroll() {
     rail.style.setProperty(
       "--rail", clamp01((y + viewportH * 0.62 - railTop) / railHeight).toFixed(3));
   }
-
-  /* the cue has done its job the moment you scroll */
-  if (cue) cue.style.opacity = (1 - clamp01(y / (viewportH * 0.22))).toFixed(3);
 
   /* the hero leaves at its own pace — it drifts, it does not dissolve */
   if (heroCopy) {

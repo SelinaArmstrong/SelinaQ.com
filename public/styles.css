@@ -435,32 +435,34 @@ a, button { -webkit-tap-highlight-color: transparent; }
   animation: cue 3.2s var(--e2) infinite;
 }
 @keyframes cue { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(100%); } }
-/* ── the band ──  agreements moving along four lanes toward an approval
-   gate. Left of the gate they are drafts; right of it they are executed
-   and carry a tick. Both states are one drawing, clipped either side of
-   the gate, so a document changes at the instant it crosses. Vector, so
-   it is crisp at any size and weighs nothing. */
-.hero-band {
-  position: relative; overflow: hidden; height: clamp(12rem, 30vw, 25rem);
-}
+/* ── the band ──  a signature, written and withdrawn. The faint strokes
+   are always there — the agreement waiting; the blue one is the hand
+   that signs it, over a ruled line. One path, drawn with stroke-dash,
+   with the nib riding its tip. */
+.hero-band { position: relative; overflow: hidden; height: clamp(12rem, 30vw, 25rem); }
 .band-art { position: absolute; inset: 0; width: 100%; height: 100%; }
-/* start mid-cycle, so the gate already has signed work past it */
-.b-flow { animation: bandflow 58s linear infinite; animation-delay: -31s; }
-@keyframes bandflow { from { transform: translateX(-880px); } to { transform: translateX(0); } }
-.d-rule { stroke: var(--ac); stroke-width: 1.5; stroke-linecap: round; opacity: .34; }
-.b-signed .d-rule { stroke: var(--hl); opacity: .62; }
-.d-tick { fill: none; stroke: var(--hl); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
-.b-draft .d-tick { display: none; }
-.b-gate { stroke: var(--hl-dk); stroke-width: 1.2; opacity: .55; }
-.b-gate-cap { stroke: var(--hl); stroke-width: 1.6; opacity: .7; }
-.b-gate-dot { fill: var(--hl); }
+.sig-rule { stroke: var(--line-2); stroke-width: 1.3; opacity: .6; }
+.sig-ghost { fill: none; stroke: var(--ac); stroke-linecap: round; }
+.sig-g1 { stroke-width: 1.3; opacity: .26; }
+.sig-g2 { stroke-width: 1; opacity: .14; }
+.sig-ink {
+  fill: none; stroke: var(--hl); stroke-width: 2.6; stroke-linecap: round; opacity: .95;
+  stroke-dasharray: 3000; stroke-dashoffset: 3000;
+  animation: sign 16s cubic-bezier(.4, 0, .2, 1) -9s infinite;
+}
+@keyframes sign {
+  0%            { stroke-dashoffset: 3000; }
+  34%, 76%      { stroke-dashoffset: 0; }
+  100%          { stroke-dashoffset: -3000; }
+}
+.sig-nib { fill: var(--hl); }
 .hero-band::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background:
-    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0) 11%,
-                    rgb(var(--bg-rgb) / 0) 89%, var(--bg) 100%),
-    linear-gradient(180deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0) 22%,
-                    rgb(var(--bg-rgb) / 0) 78%, var(--bg) 100%);
+    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0) 8%,
+                    rgb(var(--bg-rgb) / 0) 92%, var(--bg) 100%),
+    linear-gradient(180deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0) 16%,
+                    rgb(var(--bg-rgb) / 0) 84%, var(--bg) 100%);
 }
 
 /* ─────────────────────────────  METRICS  ──────────────────────────── */
@@ -955,6 +957,8 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
     opacity: 1 !important; transform: none !important;
   }
   .js .hero-band-inner, .js .reveal .case-media { clip-path: none; }
+  .sig-ink { stroke-dashoffset: 0 !important; }
+  .sig-nib { display: none; }
   .js .reveal .p-rail path { stroke-dashoffset: 0 !important; }
   .js .reveal .eyebrow i, .js .eyebrow.reveal i { transform: none; }
   .hero-copy { opacity: 1 !important; }

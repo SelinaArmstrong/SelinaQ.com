@@ -6,7 +6,7 @@ committed. What is left is getting the commits off this machine and the
 current build onto the live site.
 
 Repo: `SelinaQ.com`, branch `main`, clean working
-tree, **thirteen commits ahead of where anything has actually been
+tree, **fourteen commits ahead of where anything has actually been
 published**.
 
 ---
@@ -42,7 +42,7 @@ python3 -m http.server 8781 --directory public
 
 ## Task 1 — publish the current build
 
-The live site is **behind this checkout by thirteen commits**. Everything in them
+The live site is **behind this checkout by fourteen commits**. Everything in them
 is design work that has been reviewed and verified locally; none of it is on
 the web.
 
@@ -113,6 +113,23 @@ darkest light surface. Do not go dimmer. The inverted navy band
 (`.experience`) re-declares the whole token set in its own scope; if you touch
 it, re-check the numbers there too.
 
+**Motion is tokenised too.** Six durations in `:root` (`--m-snap` through
+`--m-draw`), chosen by what is moving, plus `--m-step` for a stagger and
+`--m-lag` for the beat before a sequence. Twenty-three ad-hoc durations had
+accumulated before that. One rule governs the pairs: a thing leaves faster
+than it arrives. In CSS that means **every entry delay and entry duration
+sits on the open state**, never on the base rule — the mobile sheet relies
+on this, so removing `.nav-open` makes everything leave at once with no
+stagger. Reversing an entrance is not an exit.
+
+**Pointer effects never measure inside the handler.** `trackPointer()` in
+`site.js` reads the element's box when the pointer arrives, re-reads only if
+`geomTick` says the page has moved under it, and folds the write into the
+next frame. The magnetic buttons, the capability cards and the project tilt
+all go through it. Calling `getBoundingClientRect()` per `pointermove` forces
+a layout several times per frame on a 240Hz mouse; that was the same mistake
+the scroll handler was rebuilt to avoid.
+
 **Scrolling.** The scroll handler in `site.js` does arithmetic only. It reads
 no layout. Positions are measured in `measure()` on load, resize and font
 swap. An earlier version called `getBoundingClientRect()` for every pending
@@ -168,9 +185,15 @@ tags against it. Accented characters were removed deliberately: the word is
 "resume", not "résumé".
 
 **Accessibility.** Mobile nav is a sheet with a focus trap, scroll lock,
-Escape to close, and a real text label on the toggle (a CSS-generated label
-left the button with no accessible name — that was a bug, not a style
-choice). Keep `aria-expanded` in sync with the open state.
+Escape to close, and `aria-expanded` kept in sync. The toggle's visible word
+turns over in CSS with both words in the box, so it is decorative and
+`aria-hidden`; the accessible name is an `aria-label` that JS updates. A
+button whose name comes only from a moving part is a button a screen reader
+cannot describe — an earlier CSS-generated label left it with no name at all.
+
+Inside the sheet, `.primary-nav a:not(.btn)` matters: without the `:not`,
+the generic nav-link colour out-specified `.btn-primary` and painted the
+white-on-blue email button in `--text-2`, at 2.0:1.
 
 ---
 

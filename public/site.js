@@ -26,7 +26,13 @@ let maxScroll = 1;
 let railTop = 0;
 let railHeight = 1;
 
+/* Bumped whenever anything can have moved on screen. Pointer effects use
+   it to know when a cached element box has gone stale, which lets them
+   measure once instead of once per event. */
+let geomTick = 0;
+
 function measure() {
+  geomTick++;
   viewportH = window.innerHeight;
   maxScroll = Math.max(root.scrollHeight - viewportH, 1);
 
@@ -37,11 +43,19 @@ function measure() {
   }
 }
 
-/* ── scroll handler: arithmetic only ───────────────────────────────── */
+/* ── scroll handler: arithmetic only ─────────────────────────────────
+   Two of the three values below spend most of the page clamped at an
+   end stop: the rail is full once you are past the timeline, the hero
+   has finished drifting after the first screen. Writing the same string
+   again still invalidates style, so each write is guarded on the value
+   having actually changed. Most frames now write once, not three times. */
 let ticking = false;
+let lastRail = "";
+let lastDrift = "";
 
 function onScroll() {
   ticking = false;
+  geomTick++;
   const y = window.scrollY;
 
   if (bar) bar.style.setProperty("--p", (y / maxScroll).toFixed(4));
@@ -50,16 +64,21 @@ function onScroll() {
 
   /* the timeline is drawn at the pace you read it */
   if (rail) {
-    rail.style.setProperty(
-      "--rail", clamp01((y + viewportH * 0.62 - railTop) / railHeight).toFixed(3));
+    const value = clamp01((y + viewportH * 0.62 - railTop) / railHeight).toFixed(3);
+    if (value !== lastRail) {
+      rail.style.setProperty("--rail", value);
+      lastRail = value;
+    }
   }
 
   /* the hero leaves at its own pace — it drifts, it does not dissolve */
   if (heroCopy) {
-    const drift = clamp01(y / (viewportH * 0.9)) * -64;
-    heroCopy.style.transform = `translate3d(0, ${drift.toFixed(1)}px, 0)`;
+    const drift = (clamp01(y / (viewportH * 0.9)) * -64).toFixed(1);
+    if (drift !== lastDrift) {
+      heroCopy.style.transform = `translate3d(0, ${drift}px, 0)`;
+      lastDrift = drift;
+    }
   }
-
 }
 
 function requestTick() {
@@ -209,37 +228,73 @@ if (sections.length) {
   sections.forEach((s) => spy.observe(s));
 }
 
-/* ── pointer flourishes (fine pointers only) ───────────────────────── */
+/* ── pointer flourishes (fine pointers only) ─────────────────────────
+   Pointer events arrive faster than frames — a 120 or 240Hz mouse fires
+   several times between paints — so measuring the element inside the
+   handler forces a layout on every one of them. That is the same mistake
+   the scroll handler was rebuilt to avoid, and it was still here.
+
+   The element's box is read once, when the pointer arrives, and again
+   only if the geometry has moved under it. The write is folded into the
+   next frame, so a burst of twelve events costs one style write, not
+   twelve layouts. */
+function trackPointer(el, write, leave) {
+  let box = null;
+  let readAt = -1;
+  let px = 0;
+  let py = 0;
+  let queued = false;
+
+  const read = () => {
+    box = el.getBoundingClientRect();
+    readAt = geomTick;
+  };
+  const flush = () => {
+    queued = false;
+    if (box) write(el, px - box.left, py - box.top, box);
+  };
+
+  el.addEventListener("pointerenter", read);
+  el.addEventListener("pointermove", (event) => {
+    if (!box || readAt !== geomTick) read();
+    px = event.clientX;
+    py = event.clientY;
+    if (!queued) {
+      queued = true;
+      requestAnimationFrame(flush);
+    }
+  });
+  el.addEventListener("pointerleave", () => {
+    box = null;
+    if (leave) leave(el);
+  });
+}
+
 if (fine.matches && !calm.matches) {
   document.querySelectorAll("[data-magnetic]").forEach((el) => {
-    el.addEventListener("pointermove", (event) => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty("--mx", `${(event.clientX - r.left - r.width / 2) * 0.16}px`);
-      el.style.setProperty("--my", `${(event.clientY - r.top - r.height / 2) * 0.26}px`);
-    });
-    el.addEventListener("pointerleave", () => {
-      el.style.setProperty("--mx", "0px");
-      el.style.setProperty("--my", "0px");
+    trackPointer(el, (node, x, y, box) => {
+      node.style.setProperty("--mx", `${(x - box.width / 2) * 0.16}px`);
+      node.style.setProperty("--my", `${(y - box.height / 2) * 0.26}px`);
+    }, (node) => {
+      node.style.setProperty("--mx", "0px");
+      node.style.setProperty("--my", "0px");
     });
   });
 
   document.querySelectorAll(".cap").forEach((el) => {
-    el.addEventListener("pointermove", (event) => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty("--px", `${event.clientX - r.left}px`);
-      el.style.setProperty("--py", `${event.clientY - r.top}px`);
+    trackPointer(el, (node, x, y) => {
+      node.style.setProperty("--px", `${x}px`);
+      node.style.setProperty("--py", `${y}px`);
     });
   });
 
   document.querySelectorAll("[data-tilt]").forEach((el) => {
-    el.addEventListener("pointermove", (event) => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty("--rx", `${((event.clientX - r.left) / r.width - 0.5) * 3.2}deg`);
-      el.style.setProperty("--ry", `${(0.5 - (event.clientY - r.top) / r.height) * 2.4}deg`);
-    });
-    el.addEventListener("pointerleave", () => {
-      el.style.setProperty("--rx", "0deg");
-      el.style.setProperty("--ry", "0deg");
+    trackPointer(el, (node, x, y, box) => {
+      node.style.setProperty("--rx", `${(x / box.width - 0.5) * 3.2}deg`);
+      node.style.setProperty("--ry", `${(0.5 - y / box.height) * 2.4}deg`);
+    }, (node) => {
+      node.style.setProperty("--rx", "0deg");
+      node.style.setProperty("--ry", "0deg");
     });
   });
 }
@@ -255,13 +310,15 @@ if (menuButton && sheet) {
   let lastFocus = null;
   const isOpen = () => menuButton.getAttribute("aria-expanded") === "true";
 
-  const label = menuButton.querySelector(".menu-label");
-
+  /* The visible word turns over in CSS, with both words in the box so the
+     button cannot change width. That makes the label decorative, so the
+     accessible name is carried by aria-label — a button whose name comes
+     only from a moving part is a button screen readers cannot describe. */
   let lockedY = 0;
 
   const setOpen = (open) => {
     menuButton.setAttribute("aria-expanded", String(open));
-    if (label) label.textContent = open ? "Close" : "Menu";
+    menuButton.setAttribute("aria-label", open ? "Close the menu" : "Open the menu");
 
     /* Hold the page exactly where it was. Clipping it with overflow:hidden
        lets the browser clamp the scroll position, and the few pixels it
@@ -286,13 +343,12 @@ if (menuButton && sheet) {
     }
   };
 
+  /* Crossing out of the mobile breakpoint with the sheet open has to run
+     the real close, not just drop the class: the scroll lock pins the body
+     with a negative top, and leaving that behind strands the page. */
   const syncToViewport = () => {
     menuButton.hidden = !mobile.matches;
-    if (!mobile.matches) {
-      menuButton.setAttribute("aria-expanded", "false");
-      root.classList.remove("nav-open");
-      if (label) label.textContent = "Menu";
-    }
+    if (!mobile.matches && isOpen()) setOpen(false);
   };
 
   syncToViewport();

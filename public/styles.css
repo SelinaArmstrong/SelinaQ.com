@@ -142,10 +142,25 @@
   --measure:    40rem;    /* body prose */
   --measure-lg: 46rem;    /* ledes and statements, which run larger */
 
-  /* ── geometry & motion ── */
+  /* ── geometry & motion ──
+     Motion was the last axis still written as literals; twenty-three
+     different durations had accumulated, which is not a system but a
+     sediment. Six remain, chosen by what is moving rather than by how
+     it felt at the time, and one rule governs the pairs: a thing leaves
+     faster than it arrives, because waiting for something to go is the
+     only part of an interface nobody enjoys. */
   --e:  cubic-bezier(.16, 1, .3, 1);
   --e2: cubic-bezier(.33, 1, .68, 1);
   --e3: cubic-bezier(.22, 1.1, .36, 1);     /* a little overshoot, for panels */
+  --m-snap:  .18s;   /* a value that tracks the pointer or the scroll */
+  --m-exit:  .26s;   /* anything on its way out */
+  --m-tint:  .3s;    /* a colour, on a control */
+  --m-tap:   .45s;   /* an icon or a control answering the pointer */
+  --m-move:  .6s;    /* an element settling into its place */
+  --m-plane: .9s;    /* a plane, a panel or a heading arriving */
+  --m-draw:  1.1s;   /* something drawn at the pace you read it */
+  --m-step:  90ms;   /* one place in a stagger */
+  --m-lag:   .12s;   /* the beat before a sequence starts */
   --r:     4px;            /* content planes; controls stay pill-shaped */
   --r-pill: 2rem;
   --head-h:    5rem;       /* one source of truth: masthead and sheet share it */
@@ -275,32 +290,32 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 /* ─────────────────────────────  MOTION PRIMITIVES  ────────────────── */
 .js .rise, .js .reveal { opacity: 0; transform: translate3d(0, 14px, 0); }
-.js .reveal .case-media { clip-path: inset(0 0 100% 0); transition: clip-path 1.1s var(--e) .12s; }
+.js .reveal .case-media { clip-path: inset(0 0 100% 0); transition: clip-path var(--m-draw) var(--e) var(--m-lag); }
 /* the body of a project arrives in steps behind its image */
 .js .reveal .step { opacity: 0; transform: translate3d(0, 10px, 0); }
 .js .reveal.in .step {
   opacity: 1; transform: none;
-  transition: opacity .7s var(--e) calc(var(--k, 0) * 90ms + 140ms),
+  transition: opacity var(--m-move) var(--e) calc(var(--k, 0) * var(--m-step) + var(--m-lag)),
               transform .8s var(--e) calc(var(--k, 0) * 90ms + 140ms);
 }
 .js .reveal.in .case-media { clip-path: inset(0 0 0 0); }
-.js .rise { transition: opacity .9s var(--e) var(--d, 0s), transform .9s var(--e) var(--d, 0s); }
+.js .rise { transition: opacity var(--m-plane) var(--e) var(--d, 0s), transform var(--m-plane) var(--e) var(--d, 0s); }
 .js .reveal {
-  transition: opacity .85s var(--e) calc(var(--i, 0) * 80ms),
+  transition: opacity var(--m-plane) var(--e) calc(var(--i, 0) * var(--m-step)),
               transform .85s var(--e) calc(var(--i, 0) * 80ms);
 }
 .js.is-ready .rise, .js .rise.in, .js .reveal.in { opacity: 1; transform: none; }
 .line { display: block; overflow: hidden; padding-bottom: .06em; }
-.js .split .line > span { display: block; transform: translate3d(0, 110%, 0); transition: transform .95s var(--e) calc(var(--l, 0) * 90ms); }
+.js .split .line > span { display: block; transform: translate3d(0, 110%, 0); transition: transform var(--m-plane) var(--e) calc(var(--l, 0) * var(--m-step)); }
 .js .reveal.in .split .line > span, .js .split.in .line > span { transform: none; }
 .js .rise-y { display: block; transform: translate3d(0, 115%, 0); }
-.js .rise-y { transition: transform 1.05s var(--e) var(--d, 0s); }
+.js .rise-y { transition: transform var(--m-draw) var(--e) var(--d, 0s); }
 .js.is-ready .rise-y { transform: none; }
 
 /* ─────────────────────────────  HEADER  ───────────────────────────── */
 .site-header {
   position: sticky; top: 0; z-index: 60; background: transparent;
-  transition: background .4s var(--e2), border-color .4s var(--e2), backdrop-filter .4s;
+  transition: background var(--m-tap) var(--e2), border-color var(--m-tap) var(--e2), backdrop-filter var(--m-tap);
   border-bottom: 1px solid transparent;
 }
 .site-header.is-stuck {
@@ -308,7 +323,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .masthead {
   display: flex; align-items: center; justify-content: space-between; gap: var(--s-6); flex-wrap: nowrap;
-  min-height: var(--head-h); transition: min-height .4s var(--e2);
+  min-height: var(--head-h); transition: min-height var(--m-tap) var(--e2);
 }
 .is-stuck .masthead { min-height: 4.1rem; }
 .nav-open .masthead { transition: none; }
@@ -321,7 +336,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   position: relative; padding-left: var(--s-4); color: var(--text-3);
   font-size: var(--t-micro); font-weight: var(--w-medium);
   letter-spacing: var(--tr-label); text-transform: uppercase;
-  white-space: nowrap; transition: color .3s;
+  white-space: nowrap; transition: color var(--m-tint);
 }
 /* the title steps aside before either half of the lockup can wrap */
 @media (max-width: 1080px) { .identity .role { display: none; } }
@@ -331,14 +346,18 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .identity:hover .role { color: var(--text-2); }
 .primary-nav { display: flex; align-items: center; gap: clamp(1.3rem, 2.3vw, 2.3rem); font-size: var(--t-xs); }
-.primary-nav a { color: var(--text-2); transition: color .3s; }
+/* :not(.btn) because the two buttons at the foot of the mobile sheet are
+   also descendants of the nav. Without it this rule out-specified
+   .btn-primary and painted white-on-blue text in --text-2 — 2.0:1, and
+   invisible in practice. */
+.primary-nav a:not(.btn) { color: var(--text-2); transition: color var(--m-tint); }
 .primary-nav a span { position: relative; display: inline-block; padding-block: var(--s-1); }
 .primary-nav a span::after {
   content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px;
   background: var(--hl); transform: scaleX(0); transform-origin: 100% 50%;
-  transition: transform .45s var(--e);
+  transition: transform var(--m-tap) var(--e);
 }
-.primary-nav a:hover { color: var(--text); }
+.primary-nav a:not(.btn):hover { color: var(--text); }
 .primary-nav a:hover span::after, .primary-nav a.is-active span::after { transform: scaleX(1); transform-origin: 0 50%; }
 .primary-nav a.is-active { color: var(--hl); }
 .status-pill {
@@ -407,10 +426,10 @@ a, button { -webkit-tap-highlight-color: transparent; }
   position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: var(--s-3);
   min-height: 3rem; padding: .8rem 1.4rem; border-radius: var(--r-pill); font-size: var(--t-sm); font-weight: var(--w-strong);
   border: 1px solid transparent; transform: translate3d(var(--mx, 0), var(--my, 0), 0);
-  transition: transform .5s var(--e), background .35s, border-color .35s, color .35s;
+  transition: transform var(--m-tap) var(--e), background var(--m-tint), border-color var(--m-tint), color var(--m-tint);
 }
 .btn:active { transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(.985); transition-duration: .08s; }
-.btn .icon { transition: transform .45s var(--e); }
+.btn .icon { transition: transform var(--m-tap) var(--e); }
 .btn:hover .icon { transform: translateX(3px); }
 .btn-primary { background: var(--hl); color: var(--hl-on); font-weight: var(--w-semi); }
 .btn-primary:hover { background: var(--hl-lt); }
@@ -471,7 +490,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .eyebrow { display: flex; align-items: center; gap: var(--s-3); color: var(--hl); font-size: var(--t-label); font-weight: var(--w-semi); letter-spacing: var(--tr-label); text-transform: uppercase; }
 .eyebrow i {
   width: 1.6rem; height: 1px; background: var(--hl-dk);
-  transform-origin: 0 50%; transition: transform .8s var(--e) .1s;
+  transform-origin: 0 50%; transition: transform var(--m-plane) var(--e) var(--m-lag);
 }
 .js .reveal .eyebrow i, .js .eyebrow.reveal i { transform: scaleX(0); }
 .js .reveal.in .eyebrow i, .js .eyebrow.reveal.in i { transform: scaleX(1); }
@@ -511,7 +530,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   position: relative; overflow: hidden; border-radius: var(--r);
   border: 1px solid var(--line); background: var(--bg-2);
   box-shadow: inset 0 1px 0 var(--edge), var(--lift);
-  transition: border-color .6s var(--e), transform .6s var(--e), box-shadow .6s var(--e);
+  transition: border-color var(--m-move) var(--e), transform var(--m-move) var(--e), box-shadow var(--m-move) var(--e);
   transform: perspective(1200px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg));
 }
 .case-media { aspect-ratio: 16 / 10; }
@@ -519,7 +538,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .case-media.shot { aspect-ratio: auto; }
 .case-media img {
   width: 100%; height: 100%; object-fit: cover; object-position: 50% 0;
-  transition: transform 1.1s var(--e), filter .8s var(--e);
+  transition: transform var(--m-draw) var(--e), filter var(--m-plane) var(--e);
 }
 /* ── the screenshots ──  shown as what they are: a running product.
    A browser bar above, the view cropped to its top rather than the whole
@@ -556,7 +575,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   letter-spacing: var(--tr-label-sm); text-transform: uppercase;
   box-shadow: 0 10px 28px -12px rgb(var(--hl-rgb) / .7);
   opacity: 0; transform: translate(-50%, -50%) scale(.92);
-  transition: opacity .35s var(--e), transform .5s var(--e3);
+  transition: opacity var(--m-tint) var(--e), transform var(--m-tap) var(--e3);
 }
 .case-shot:hover .case-chip, .case-shot:focus-visible .case-chip {
   opacity: 1; transform: translate(-50%, -50%) scale(1);
@@ -565,7 +584,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 .case-media::before {
   content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  box-shadow: inset 0 0 0 1px var(--ac-dim); opacity: 0; transition: opacity .6s var(--e);
+  box-shadow: inset 0 0 0 1px var(--ac-dim); opacity: 0; transition: opacity var(--m-move) var(--e);
 }
 .case-media:hover::before { opacity: 1; }
 .case-media figcaption {
@@ -589,7 +608,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
    hover. Both grow the rule from the left and nudge their icon. */
 .link-lead, .link-quiet {
   position: relative; display: inline-flex; align-items: center; gap: var(--s-2);
-  padding-bottom: var(--s-1); transition: color .35s;
+  padding-bottom: var(--s-1); transition: color var(--m-tint);
 }
 .link-lead  { color: var(--hl); font-size: var(--t-sm); font-weight: var(--w-strong);
               border-bottom: 1px solid var(--hl-dim); }
@@ -597,12 +616,12 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .link-lead::after, .link-quiet::after {
   content: ""; position: absolute; left: 0; bottom: -1px; width: 100%; height: 1px;
   background: currentColor; transform: scaleX(0); transform-origin: 100% 50%;
-  transition: transform .5s var(--e);
+  transition: transform var(--m-tap) var(--e);
 }
 .link-lead:hover::after, .link-quiet:hover::after { transform: scaleX(1); transform-origin: 0 50%; }
 .link-lead:hover  { color: var(--hl-lt); }
 .link-quiet:hover { color: var(--hl); }
-.link-lead .icon, .link-quiet .icon { transition: transform .45s var(--e); }
+.link-lead .icon, .link-quiet .icon { transition: transform var(--m-tap) var(--e); }
 .link-lead:hover .icon, .link-quiet:hover .icon { transform: translateX(3px); }
 
 
@@ -645,7 +664,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   background: linear-gradient(180deg, var(--ac-dk), var(--line) 55%, transparent);
   transform: scaleY(var(--rail, 1)); transform-origin: 50% 0;
 }
-.js .rail::before { --rail: 0; transition: transform .18s linear; }
+.js .rail::before { --rail: 0; transition: transform var(--m-snap) linear; }
 .rail > li { position: relative; }
 .rail > li + li { margin-top: clamp(2.2rem, 4vw, 3.4rem); }
 .rail > li::before {
@@ -675,13 +694,13 @@ a, button { -webkit-tap-highlight-color: transparent; }
   padding: var(--pad-card); border: 1px solid var(--line);
   background: linear-gradient(170deg, var(--bg-2), rgb(var(--bg-rgb) / .4));
   box-shadow: inset 0 1px 0 var(--edge), var(--lift);
-  transition: border-color .5s var(--e), transform .5s var(--e), background .5s var(--e), box-shadow .5s var(--e);
+  transition: border-color var(--m-tap) var(--e), transform var(--m-tap) var(--e), background var(--m-tap) var(--e), box-shadow var(--m-tap) var(--e);
 }
 .cap::after {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0;
   background: radial-gradient(16rem 16rem at var(--px, 50%) var(--py, 0%),
               rgb(var(--hl-rgb) / .14), transparent 68%);
-  transition: opacity .5s var(--e);
+  transition: opacity var(--m-tap) var(--e);
 }
 .cap:hover { border-color: var(--line-2); transform: translateY(-3px); background: linear-gradient(170deg, var(--bg-3), var(--bg-2)); }
 .cap:hover::after { opacity: 1; }
@@ -690,7 +709,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .tags { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .tags li {
   padding: .4rem .72rem; border: 1px solid var(--line-2); border-radius: var(--r-pill);
-  color: var(--text-2); font-size: var(--t-2xs); line-height: var(--lh-snug); transition: border-color .35s, color .35s;
+  color: var(--text-2); font-size: var(--t-2xs); line-height: var(--lh-snug); transition: border-color var(--m-tint), color var(--m-tint);
 }
 .tags li:hover { border-color: var(--hl-dk); color: var(--hl-lt); }
 .credentials { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap-col); margin-top: var(--gap-head); padding-top: var(--gap-row); border-top: 1px solid var(--line); }
@@ -715,7 +734,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 /* the eyebrow rule mirrored, so a centred label is symmetrical */
 .contact .eyebrow::after {
   content: ""; width: 1.6rem; height: 1px; background: var(--hl-dk);
-  transform-origin: 100% 50%; transition: transform .8s var(--e) .1s;
+  transform-origin: 100% 50%; transition: transform var(--m-plane) var(--e) var(--m-lag);
 }
 .js .contact .eyebrow.reveal::after { transform: scaleX(0); }
 .js .contact .eyebrow.reveal.in::after { transform: scaleX(1); }
@@ -727,18 +746,18 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .mailto {
   position: relative; display: inline-flex; align-items: center; gap: var(--s-4);
   font-size: var(--t-3); font-weight: var(--w-medium); letter-spacing: var(--tr-4);
-  color: var(--hl); padding-bottom: var(--s-2); transition: color .35s;
+  color: var(--hl); padding-bottom: var(--s-2); transition: color var(--m-tint);
 }
-.mailto .icon { width: 1.1em; height: 1.1em; stroke-width: 1.5; transition: transform .45s var(--e); }
+.mailto .icon { width: 1.1em; height: 1.1em; stroke-width: 1.5; transition: transform var(--m-tap) var(--e); }
 .mailto::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
   background: currentColor; transform: scaleX(1); transform-origin: 0 50%;
-  transition: transform .5s var(--e);
+  transition: transform var(--m-tap) var(--e);
 }
 .mailto:hover { color: var(--hl-lt); }
 .mailto:hover .icon { transform: translateX(4px); }
 .profiles { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--s-3) var(--s-7); }
-.c-link .icon { color: var(--ac-dk); transition: color .35s; }
+.c-link .icon { color: var(--ac-dk); transition: color var(--m-tint); }
 .c-link:hover .icon { color: var(--hl); }
 .contact-note { max-width: var(--measure-sm); margin: var(--gap-row) auto 0; color: var(--text-3); font-size: var(--t-xs); line-height: var(--lh-body); text-wrap: balance; }
 .contact-note.tight { margin-top: var(--s-2); }
@@ -763,7 +782,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .doc-body h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .doc-body p { margin-top: var(--s-4); color: var(--text-2); line-height: var(--lh-relaxed); }
-.doc-body a { color: var(--hl); text-decoration: underline; text-decoration-color: var(--hl-dim); text-underline-offset: .22em; transition: text-decoration-color .3s, color .3s; }
+.doc-body a { color: var(--hl); text-decoration: underline; text-decoration-color: var(--hl-dim); text-underline-offset: .22em; transition: text-decoration-color var(--m-tint), color var(--m-tint); }
 .doc-body a:hover { color: var(--hl-lt); text-decoration-color: currentColor; }
 .doc-body code {
   padding: .1em .4em; border: 1px solid var(--line); border-radius: var(--r);
@@ -834,7 +853,19 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .masthead, .is-stuck .masthead {
     min-height: var(--head-h-sm); transition: none; flex-wrap: nowrap; row-gap: 0;
   }
-  /* ── the menu is a sheet, not a cramped drop-down ── */
+  /* ── the menu is a sheet, not a cramped drop-down ──────────────────
+     The whole thing is one idea: the masthead lifts a plane down over
+     the page, and the page's own ruled lines draw themselves across it.
+     Nothing flies in from off-screen, because nothing on this site
+     arrives that way.
+
+     Opening and closing are deliberately not the same move played
+     backwards. Opening is a sequence you are meant to watch: the plane
+     unrolls, then the words settle into it, then the rules draw, then
+     the pill and the buttons. Closing is a single decision you have
+     already made, so it is one fast movement with no stagger at all —
+     every delay below sits on .nav-open, which means the moment the
+     class comes off, everything leaves together. */
   .menu-toggle:not([hidden]) {
     position: relative; z-index: 2;
     display: inline-flex; align-items: center; gap: var(--s-3);
@@ -842,66 +873,118 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
     border: 1px solid var(--line-2); border-radius: var(--r-pill);
     font-size: var(--t-xs); font-weight: var(--w-medium); color: var(--text); cursor: pointer;
     background: var(--bg-2); box-shadow: var(--lift);
-    transition: border-color .3s, color .3s, background .3s;
+    transition: border-color var(--m-tint), color var(--m-tint), background var(--m-tint);
   }
   .menu-toggle[aria-expanded="true"] { border-color: var(--hl); color: var(--hl); }
   .menu-toggle:active { transform: scale(.96); transition-duration: .07s; }
+
+  /* The word turns over rather than being swapped out. Both words are
+     in the box, so the button cannot change width as the label changes
+     — "Menu" and "Close" are not the same length, and that jump was
+     visible every time. */
+  .menu-label { display: grid; overflow: hidden; }
+  .menu-label i {
+    grid-area: 1 / 1; display: block; font-style: normal;
+    transition: transform var(--m-tap) var(--e), opacity var(--m-tint) linear;
+  }
+  /* the word going out gives up its opacity on the way, so the two are
+     never both fully legible in a one-line window */
+  .menu-label i:last-child { transform: translateY(100%); opacity: 0; }
+  .menu-toggle[aria-expanded="true"] .menu-label i { transform: translateY(-100%); opacity: 0; }
+  .menu-toggle[aria-expanded="true"] .menu-label i:last-child { transform: translateY(0); opacity: 1; }
+
+  /* Two bars become a cross in two beats, not one: opening, they meet
+     first and then cross; closing, they uncross first and then part.
+     translate and rotate are separate properties, so each beat can hold
+     its own delay without a keyframe in sight. */
   .menu-icon { display: grid; gap: 5px; width: .95rem; }
   .menu-icon i {
     display: block; height: 1.5px; border-radius: 1px; background: currentColor;
-    transition: transform .42s var(--e);
+    transition: translate var(--m-exit) var(--e2) var(--m-snap), rotate var(--m-exit) var(--e);
   }
-  .menu-toggle[aria-expanded="true"] .menu-icon i:first-child { transform: translateY(3.25px) rotate(45deg); }
-  .menu-toggle[aria-expanded="true"] .menu-icon i:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+  .menu-toggle[aria-expanded="true"] .menu-icon i {
+    transition: translate var(--m-exit) var(--e2), rotate var(--m-tap) var(--e) var(--m-snap);
+  }
+  .menu-toggle[aria-expanded="true"] .menu-icon i:first-child { translate: 0 3.25px; rotate: 45deg; }
+  .menu-toggle[aria-expanded="true"] .menu-icon i:last-child { translate: 0 -3.25px; rotate: -45deg; }
 
   .nav-open { overflow: hidden; }
   .nav-open body { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; }
   .nav-open .site-header { background: var(--bg); border-bottom-color: var(--line); }
 
   .primary-nav {
+    --sheet-step: calc(var(--m-step) / 2);
     position: fixed; inset: var(--head-h-sm) 0 0; z-index: 1;
     display: flex; flex-direction: column; align-items: stretch; gap: 0;
     padding: clamp(1rem, 4vw, 1.8rem) 5.5% calc(1.8rem + env(safe-area-inset-bottom));
-    background: var(--bg); overflow-y: auto; overscroll-behavior: contain;
-    /* one composited property does the move; the panel is promoted only
-       while it is in flight, so idle pages pay nothing for it */
-    opacity: 0; visibility: hidden;
-    transform: translate3d(0, -1.25rem, 0);
-    transition: opacity .22s linear, transform .34s var(--e3), visibility .34s;
+    /* The sheet is the lifted tone, not the page tone. They were the
+       same colour, which made the wipe invisible: the plane could only
+       be inferred from the text it covered. One step of value and the
+       edge reads as an edge. */
+    background: var(--bg-1); overflow-y: auto; overscroll-behavior: contain;
+    box-shadow: inset 0 1px 0 var(--edge);
+    /* the plane unrolls from the masthead's own hairline — the same
+       wipe the project frames use, so the sheet belongs to the page
+       rather than being borrowed from an app */
+    clip-path: inset(0 0 100% 0); visibility: hidden;
+    transition: clip-path var(--m-exit) var(--e2), visibility var(--m-exit);
   }
   .nav-open .primary-nav {
-    opacity: 1; visibility: visible; transform: none; will-change: transform;
+    clip-path: inset(0 0 0 0); visibility: visible; will-change: clip-path;
+    transition: clip-path var(--m-tap) var(--e), visibility 0s;
   }
 
-  .primary-nav > a {
+  .primary-nav > a:not(.btn) {
+    position: relative;
     display: flex; align-items: center; gap: var(--s-4);
-    padding: 1.15rem .2rem; border-bottom: 1px solid var(--line);
+    padding: 1.15rem .2rem;
     font-size: var(--t-4); font-weight: var(--w-medium); letter-spacing: var(--tr-4); color: var(--text);
-    opacity: 0; transform: translate3d(0, 14px, 0);
-    transition: opacity .26s linear, transform .42s var(--e3), color .25s;
+    opacity: 0; transform: translate3d(0, 10px, 0);
+    transition: opacity var(--m-exit) linear, transform var(--m-exit) var(--e2), color var(--m-tint);
+  }
+  /* the rule under each line is drawn, not printed */
+  .primary-nav > a::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: var(--line); transform: scaleX(0); transform-origin: 0 50%;
+    transition: transform var(--m-exit) var(--e2);
   }
   .primary-nav > a span::after { display: none; }
   .primary-nav > a.is-active { color: var(--hl); }
   .primary-nav > a:active { color: var(--hl); }
-  .nav-open .primary-nav > a { opacity: 1; transform: none; }
-  .nav-open .primary-nav > a:nth-child(1) { transition-delay: .05s; }
-  .nav-open .primary-nav > a:nth-child(2) { transition-delay: .09s; }
-  .nav-open .primary-nav > a:nth-child(3) { transition-delay: .13s; }
-  .nav-open .primary-nav > a:nth-child(4) { transition-delay: .17s; }
+  .nav-open .primary-nav > a {
+    opacity: 1; transform: none;
+    transition: opacity var(--m-tap) linear var(--sd), transform var(--m-tap) var(--e) var(--sd), color var(--m-tint);
+  }
+  .nav-open .primary-nav > a::after {
+    transform: scaleX(1);
+    transition: transform var(--m-move) var(--e) var(--sd);
+  }
+  .primary-nav > a:nth-child(1) { --sd: var(--m-lag); }
+  .primary-nav > a:nth-child(2) { --sd: calc(var(--m-lag) + var(--sheet-step)); }
+  .primary-nav > a:nth-child(3) { --sd: calc(var(--m-lag) + var(--sheet-step) * 2); }
+  .primary-nav > a:nth-child(4) { --sd: calc(var(--m-lag) + var(--sheet-step) * 3); }
 
   .primary-nav .status-pill {
     align-self: flex-start; margin-top: var(--s-6);
-    opacity: 0; transform: translate3d(0, 14px, 0);
-    transition: opacity .26s linear .2s, transform .42s var(--e3) .2s;
+    opacity: 0; transform: translate3d(0, 10px, 0);
+    transition: opacity var(--m-exit) linear, transform var(--m-exit) var(--e2);
   }
-  .nav-open .primary-nav .status-pill { opacity: 1; transform: none; }
+  .nav-open .primary-nav .status-pill {
+    opacity: 1; transform: none;
+    --sd: calc(var(--m-lag) + var(--sheet-step) * 4);
+    transition: opacity var(--m-tap) linear var(--sd), transform var(--m-tap) var(--e) var(--sd);
+  }
 
   .nav-cta {
     display: grid; gap: var(--s-3); margin-top: auto; padding-top: var(--s-7);
-    opacity: 0; transform: translate3d(0, 14px, 0);
-    transition: opacity .26s linear .23s, transform .42s var(--e3) .23s;
+    opacity: 0; transform: translate3d(0, 10px, 0);
+    transition: opacity var(--m-exit) linear, transform var(--m-exit) var(--e2);
   }
-  .nav-open .nav-cta { opacity: 1; transform: none; }
+  .nav-open .nav-cta {
+    opacity: 1; transform: none;
+    --sd: calc(var(--m-lag) + var(--sheet-step) * 5);
+    transition: opacity var(--m-tap) linear var(--sd), transform var(--m-tap) var(--e) var(--sd);
+  }
   .nav-cta .btn { width: 100%; min-height: 3.2rem; font-size: var(--t-sm); }
   .hero { padding-top: var(--s-8); }
   .display { font-size: var(--t-display); letter-spacing: var(--tr-display); }

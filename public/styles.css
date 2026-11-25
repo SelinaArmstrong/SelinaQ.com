@@ -302,7 +302,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   background: rgb(var(--bg-rgb) / .96); backdrop-filter: blur(10px) saturate(130%); border-bottom-color: var(--line);
 }
 .masthead {
-  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-6); flex-wrap: nowrap;
   min-height: var(--head-h); transition: min-height .4s var(--e2);
 }
 .is-stuck .masthead { min-height: 4.1rem; }
@@ -310,14 +310,16 @@ a, button { -webkit-tap-highlight-color: transparent; }
 /* The name is the mark. Three pictorial marks were drawn and none of
    them earned its place beside a name this short; a typographic lockup
    says more and survives every size. */
-.identity { display: inline-flex; align-items: baseline; gap: var(--s-3); }
-.wordmark { font-size: var(--t-body); font-weight: var(--w-semi); letter-spacing: var(--tr-tight); }
+.identity { display: inline-flex; align-items: baseline; gap: var(--s-3); flex: none; }
+.wordmark { font-size: var(--t-body); font-weight: var(--w-semi); letter-spacing: var(--tr-tight); white-space: nowrap; }
 .identity .role {
   position: relative; padding-left: var(--s-4); color: var(--text-3);
   font-size: var(--t-micro); font-weight: var(--w-medium);
   letter-spacing: var(--tr-label); text-transform: uppercase;
-  transition: color .3s;
+  white-space: nowrap; transition: color .3s;
 }
+/* the title steps aside before either half of the lockup can wrap */
+@media (max-width: 1080px) { .identity .role { display: none; } }
 .identity .role::before {
   content: ""; position: absolute; left: 0; top: .1em; bottom: .1em;
   width: 1px; background: var(--line-2);

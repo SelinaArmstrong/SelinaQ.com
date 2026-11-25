@@ -46,7 +46,6 @@
   --hl-rgb:    28 95 208;
   --hl:        rgb(var(--hl-rgb));
   --hl-lt:     #164FAF;    /* hover: goes deeper, not lighter */
-  --hl-hi:     #0F3D8C;
   --hl-dk:     #5E90D8;    /* soft blue marks and rules */
   --hl-on:     #FFFFFF;    /* text sitting on filled azure */
   --hl-dim:    rgb(var(--hl-rgb) / .28);
@@ -94,7 +93,6 @@
   --nv-label:  #A7ADB6;
   --nv-hl-rgb: 88 166 255;
   --nv-hl-lt:  #9ECBFF;
-  --nv-hl-hi:  #CFE4FF;
   --nv-hl-dk:  #2F6FBF;
 
   /* ── type ──  one ramp. Nothing below sets a size that is not on it. */
@@ -148,6 +146,7 @@
   --gap-row:  clamp(1.8rem, 3.4vw, 2.8rem);  /* row to row */
   --gap-col:  clamp(2rem, 5vw, 5rem);        /* two-column gutter */
   --gap-card: clamp(1rem, 2vw, 1.6rem);      /* card to card */
+  --gap-entry: clamp(2.2rem, 4vw, 3.4rem);   /* one entry on the timeline to the next */
   --pad-card: clamp(1.4rem, 2.4vw, 2rem);
 
   /* measure — how far a line of text is allowed to run. Three widths,
@@ -177,9 +176,39 @@
   --m-lag:   .12s;   /* the beat before a sequence starts */
   --r:     4px;            /* content planes; controls stay pill-shaped */
   --r-pill: 2rem;
-  --head-h:    5rem;       /* one source of truth: masthead and sheet share it */
-  --head-h-sm: 4.3rem;
+
+  /* ── what the page draws with ──  as opposed to the space it leaves.
+     These were literals scattered through the file, and several of
+     them appeared twice — which is how two things that are supposed to
+     match quietly stop matching. */
+  --rule:    1px;          /* a hairline: borders, dividers, the spine */
+  --rule-2:  2px;          /* an emphatic rule: the progress bar, the address */
+  --icon:    1.05rem;      /* every inline icon */
+  --dot:     7px;          /* a node on the timeline */
+  --mark:    .35rem;       /* a bullet */
+  --ctl-h:    3rem;        /* a button */
+  --ctl-h-sm: 2.6rem;      /* a compact control: the menu toggle */
+  --ctl-h-lg: 3.2rem;      /* a full-width control on a touch sheet */
+  --bar-h:   1.5px;        /* the two rules in the menu mark, and their */
+  --bar-gap: 5px;          /* gap: the cross is derived from both */
+  --rail-indent: clamp(1.4rem, 2.6vw, 2.2rem);
+
+  /* ── the page's own edges ──  the gutter is stated once so the shell
+     and the full-bleed mobile sheet line up on it instead of agreeing
+     by accident. */
+  --gutter: 5.5%;
   --shell: 78rem;
+  --head-h:     5rem;      /* one source of truth: masthead and sheet share it */
+  --head-h-min: 4.1rem;    /* the masthead once it has stuck */
+  --head-h-sm:  4.3rem;
+
+  /* ── the title page's rhythm ──  four steps, fluid like the name
+     above them. They live here rather than in .hero so the first
+     screen can be re-tuned as one thing. */
+  --gap-name:    clamp(1.1rem, 2.4vw, 1.9rem);   /* kicker to the name */
+  --gap-lede:    clamp(1.5rem, 3vw, 2.2rem);     /* the name to the line under it */
+  --gap-actions: clamp(1.8rem, 3vw, 2.5rem);     /* the line to the buttons */
+  --gap-meta:    clamp(1.4rem, 2.4vw, 2rem);     /* the buttons to the small print */
   --body: Geist, "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -212,7 +241,6 @@
 
   --hl-rgb:    var(--nv-hl-rgb);
   --hl-lt:     var(--nv-hl-lt);
-  --hl-hi:     var(--nv-hl-hi);
   --hl-dk:     var(--nv-hl-dk);
   --hl-on:     #06121F;
   --hl-dim:    rgb(var(--hl-rgb) / .22);
@@ -244,14 +272,14 @@ a, button { -webkit-tap-highlight-color: transparent; }
 ::selection { background: var(--hl); color: var(--hl-on); }
 .symbols { display: none; }
 .icon {
-  width: 1.05rem; height: 1.05rem; flex: none; fill: none; stroke: currentColor;
+  width: var(--icon); height: var(--icon); flex: none; fill: none; stroke: currentColor;
   stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
 }
-.shell { width: min(89%, var(--shell)); margin-inline: auto; }
+.shell { width: min(calc(100% - var(--gutter) * 2), var(--shell)); margin-inline: auto; }
 .skip-link {
-  position: fixed; top: .7rem; left: .7rem; z-index: 90; padding: .7rem 1.1rem;
+  position: fixed; top: var(--s-3); left: var(--s-3); z-index: 90; padding: var(--s-3) var(--s-5);
   background: var(--hl); color: var(--hl-on); font-weight: var(--w-semi); font-size: var(--t-xs);
-  border-radius: 2px; transform: translateY(-200%);
+  border-radius: var(--r); transform: translateY(-200%);
 }
 .skip-link:focus { transform: none; }
 
@@ -280,7 +308,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   80%  { transform: translate(3%, 1%); }
   100% { transform: translate(0, 0); }
 }
-.progress { position: fixed; inset: 0 0 auto; z-index: 70; height: 2px; pointer-events: none; }
+.progress { position: fixed; inset: 0 0 auto; z-index: 70; height: var(--rule-2); pointer-events: none; }
 .progress i {
   display: block; height: 100%; background: var(--hl);
   transform: scaleX(var(--p, 0)); transform-origin: 0 50%;
@@ -333,7 +361,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .site-header {
   position: sticky; top: 0; z-index: 60; background: transparent;
   transition: background var(--m-tap) var(--e2), border-color var(--m-tap) var(--e2), backdrop-filter var(--m-tap);
-  border-bottom: 1px solid transparent;
+  border-bottom: var(--rule) solid transparent;
 }
 .site-header.is-stuck {
   background: rgb(var(--bg-rgb) / .96); backdrop-filter: blur(10px) saturate(130%); border-bottom-color: var(--line);
@@ -342,7 +370,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   display: flex; align-items: center; justify-content: space-between; gap: var(--s-6); flex-wrap: nowrap;
   min-height: var(--head-h); transition: min-height var(--m-tap) var(--e2);
 }
-.is-stuck .masthead { min-height: 4.1rem; }
+.is-stuck .masthead { min-height: var(--head-h-min); }
 .nav-open .masthead { transition: none; }
 /* The name is the mark. Three pictorial marks were drawn and none of
    them earned its place beside a name this short; a typographic lockup
@@ -359,7 +387,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 1080px) { .identity .role { display: none; } }
 .identity .role::before {
   content: ""; position: absolute; left: 0; top: .1em; bottom: .1em;
-  width: 1px; background: var(--line-2);
+  width: var(--rule); background: var(--line-2);
 }
 .identity:hover .role { color: var(--text-2); }
 .primary-nav { display: flex; align-items: center; gap: clamp(1.3rem, 2.3vw, 2.3rem); font-size: var(--t-xs); }
@@ -370,7 +398,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .primary-nav a:not(.btn) { color: var(--text-2); transition: color var(--m-tint); }
 .primary-nav a span { position: relative; display: inline-block; padding-block: var(--s-1); }
 .primary-nav a span::after {
-  content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px;
+  content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: var(--rule);
   background: var(--hl); transform: scaleX(0); transform-origin: 100% 50%;
   transition: transform var(--m-tap) var(--e);
 }
@@ -379,12 +407,12 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .primary-nav a.is-active { color: var(--hl); }
 .status-pill {
   display: inline-flex; align-items: center; gap: var(--s-2); padding: .42rem .8rem .42rem .68rem;
-  border: 1px solid var(--hl-dim); background: rgb(var(--hl-rgb) / .06);
+  border: var(--rule) solid var(--hl-dim); background: rgb(var(--hl-rgb) / .06);
   border-radius: var(--r-pill); font-size: var(--t-2xs); color: var(--text-2);
 }
 .pulse { position: relative; width: .4rem; height: .4rem; border-radius: 50%; background: var(--ok); }
 .pulse::after {
-  content: ""; position: absolute; inset: -.2rem; border-radius: 50%; border: 1px solid var(--ok);
+  content: ""; position: absolute; inset: -.2rem; border-radius: 50%; border: var(--rule) solid var(--ok);
   animation: pulse 2.4s var(--e2) infinite;
 }
 @keyframes pulse { 0% { opacity: .9; transform: scale(.6); } 70%, 100% { opacity: 0; transform: scale(1.7); } }
@@ -411,17 +439,17 @@ a, button { -webkit-tap-highlight-color: transparent; }
   display: inline-flex; align-items: center; gap: var(--s-4); color: var(--hl);
   font-size: var(--t-2xs); font-weight: var(--w-semi); letter-spacing: var(--tr-label); text-transform: uppercase;
 }
-.kicker::before, .kicker::after { content: ""; width: clamp(1.4rem, 4vw, 3rem); height: 1px; background: linear-gradient(90deg, transparent, var(--hl-dk)); }
+.kicker::before, .kicker::after { content: ""; width: clamp(1.4rem, 4vw, 3rem); height: var(--rule); background: linear-gradient(90deg, transparent, var(--hl-dk)); }
 .kicker::after { background: linear-gradient(90deg, var(--hl-dk), transparent); }
 .display {
   position: relative;
-  margin-top: clamp(1.1rem, 2.4vw, 1.9rem);
+  margin-top: var(--gap-name);
   font-size: var(--t-display); line-height: var(--lh-display);
   letter-spacing: var(--tr-display); font-weight: var(--w-medium);
 }
 /* one redline pass across the name on arrival */
 .js.is-ready .display::after {
-  content: ""; position: absolute; left: -2%; right: -2%; top: 51%; height: 1px;
+  content: ""; position: absolute; left: -2%; right: -2%; top: 51%; height: var(--rule);
   background: linear-gradient(90deg, transparent, var(--hl-lt) 45%, var(--hl) 55%, transparent);
   transform-origin: 0 50%; pointer-events: none;
   animation: redline 1.9s var(--e) .45s both;
@@ -434,15 +462,15 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .display .muted { color: var(--display-2); }
 .lede {
-  max-width: var(--measure); margin: clamp(1.5rem, 3vw, 2.2rem) auto 0;
+  max-width: var(--measure); margin: var(--gap-lede) auto 0;
   color: var(--text-2); font-size: var(--t-lead); line-height: var(--lh-body);
   letter-spacing: var(--tr-body); text-wrap: balance;
 }
-.actions { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--s-3); margin-top: clamp(1.8rem, 3vw, 2.5rem); }
+.actions { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--gap-actions); }
 .btn {
   position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: var(--s-3);
-  min-height: 3rem; padding: .8rem 1.4rem; border-radius: var(--r-pill); font-size: var(--t-sm); font-weight: var(--w-strong);
-  border: 1px solid transparent; transform: translate3d(var(--mx, 0), var(--my, 0), 0);
+  min-height: var(--ctl-h); padding: var(--s-3) var(--s-6); border-radius: var(--r-pill); font-size: var(--t-sm); font-weight: var(--w-strong);
+  border: var(--rule) solid transparent; transform: translate3d(var(--mx, 0), var(--my, 0), 0);
   transition: transform var(--m-tap) var(--e), background var(--m-tint), border-color var(--m-tint), color var(--m-tint);
 }
 .btn:active { transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(.985); transition-duration: .08s; }
@@ -455,7 +483,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .btn-ghost:hover { border-color: var(--hl); color: var(--hl-lt); }
 .hero-meta {
   display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: var(--s-2) var(--s-3);
-  margin-top: clamp(1.4rem, 2.4vw, 2rem); color: var(--text-3); font-size: var(--t-xs);
+  margin-top: var(--gap-meta); color: var(--text-3); font-size: var(--t-xs);
 }
 .hero-meta .icon { width: .92rem; height: .92rem; color: var(--ac-dk); margin-right: -.2rem; }
 .hero-meta .where { display: inline-flex; align-items: center; gap: var(--s-2) var(--s-3); }
@@ -469,7 +497,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .metrics-grid {
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: var(--gap-card) var(--gap-col);
-  padding-block: var(--s-8) 0; border-top: 1px solid var(--line);
+  padding-block: var(--s-8) 0; border-top: var(--rule) solid var(--line);
 }
 /* markup is dt-then-dd (as the spec requires); column-reverse puts the figure on top */
 .metrics-grid > div { display: flex; flex-direction: column-reverse; justify-content: flex-end; }
@@ -494,7 +522,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 /* ─────────────────────────────  THESIS  ──────────────────────────── */
 /* One line between the numbers and the work: what the numbers were for. */
 .thesis { padding-block: var(--sec-y-sm); }
-.thesis .shell { border-block: 1px solid var(--line); }
+.thesis .shell { border-block: var(--rule) solid var(--line); }
 .thesis p {
   max-width: var(--measure-lg); padding-block: var(--s-8);
   font-size: var(--t-4); line-height: var(--lh-snug);
@@ -506,7 +534,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .section { position: relative; padding-block: var(--sec-y); }
 .eyebrow { display: flex; align-items: center; gap: var(--s-3); color: var(--hl); font-size: var(--t-label); font-weight: var(--w-semi); letter-spacing: var(--tr-label); text-transform: uppercase; }
 .eyebrow i {
-  width: 1.6rem; height: 1px; background: var(--hl-dk);
+  width: 1.6rem; height: var(--rule); background: var(--hl-dk);
   transform-origin: 0 50%; transition: transform var(--m-plane) var(--e) var(--m-lag);
 }
 .js .reveal .eyebrow i, .js .eyebrow.reveal i { transform: scaleX(0); }
@@ -525,7 +553,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .case + .case { margin-top: var(--sec-y-sm); }
 .case-head {
   display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: var(--s-4);
-  padding-bottom: var(--s-4); border-bottom: 1px solid var(--line);
+  padding-bottom: var(--s-4); border-bottom: var(--rule) solid var(--line);
   margin-bottom: var(--gap-row);
 }
 .case-no {
@@ -540,13 +568,13 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .case:nth-child(even) .case-grid .case-media { order: 2; }
 .case-tags { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-5); }
 .case-tags li {
-  padding: .32rem .66rem; border: 1px solid var(--line); border-radius: var(--r-pill);
+  padding: .32rem .66rem; border: var(--rule) solid var(--line); border-radius: var(--r-pill);
   background: var(--bg-2); color: var(--text-3); font-size: var(--t-2xs); line-height: var(--lh-snug);
 }
 .case-media {
   position: relative; overflow: hidden; border-radius: var(--r);
-  border: 1px solid var(--line); background: var(--bg-2);
-  box-shadow: inset 0 1px 0 var(--edge), var(--lift);
+  border: var(--rule) solid var(--line); background: var(--bg-2);
+  box-shadow: inset 0 var(--rule) 0 var(--edge), var(--lift);
   transition: border-color var(--m-move) var(--e), transform var(--m-move) var(--e), box-shadow var(--m-move) var(--e);
   transform: perspective(1200px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg));
 }
@@ -564,7 +592,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .shot-bar {
   display: flex; align-items: center; gap: var(--s-2);
   padding: 0 var(--s-4); height: 2.1rem; flex: none;
-  border-bottom: 1px solid var(--line); background: var(--bg);
+  border-bottom: var(--rule) solid var(--line); background: var(--bg);
 }
 .shot-bar i { width: .4rem; height: .4rem; border-radius: 50%; background: var(--line-2); }
 .shot-bar i:first-child { margin-left: 0; }
@@ -579,7 +607,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
    swallows its own content. */
 .shot-view img { width: 100%; height: auto; display: block; }
 .case-shot:hover .case-media, .case-shot:focus-visible .case-media {
-  box-shadow: inset 0 1px 0 var(--edge), var(--lift-hi);
+  box-shadow: inset 0 var(--rule) 0 var(--edge), var(--lift-hi);
 }
 
 .case-shot { display: block; border-radius: var(--r); }
@@ -601,7 +629,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 .case-media::before {
   content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  box-shadow: inset 0 0 0 1px var(--ac-dim); opacity: 0; transition: opacity var(--m-move) var(--e);
+  box-shadow: inset 0 0 0 var(--rule) var(--ac-dim); opacity: 0; transition: opacity var(--m-move) var(--e);
 }
 .case-media:hover::before { opacity: 1; }
 .case-media figcaption {
@@ -616,7 +644,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   position: relative; padding-left: var(--s-6); color: var(--text-3); font-size: var(--t-sm); line-height: var(--lh-body);
 }
 .case-points li::before {
-  content: ""; position: absolute; left: 0; top: .62em; width: .35rem; height: .35rem;
+  content: ""; position: absolute; left: 0; top: .62em; width: var(--mark); height: var(--mark);
   background: var(--ac-dk); transform: rotate(45deg);
 }
 .case-links { display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-7); margin-top: var(--s-7); }
@@ -628,10 +656,10 @@ a, button { -webkit-tap-highlight-color: transparent; }
   padding-bottom: var(--s-1); transition: color var(--m-tint);
 }
 .link-lead  { color: var(--hl); font-size: var(--t-sm); font-weight: var(--w-strong);
-              border-bottom: 1px solid var(--hl-dim); }
+              border-bottom: var(--rule) solid var(--hl-dim); }
 .link-quiet { color: var(--text-2); font-size: var(--t-xs); }
 .link-lead::after, .link-quiet::after {
-  content: ""; position: absolute; left: 0; bottom: -1px; width: 100%; height: 1px;
+  content: ""; position: absolute; left: 0; bottom: -1px; width: 100%; height: var(--rule);
   background: currentColor; transform: scaleX(0); transform-origin: 100% 50%;
   transition: transform var(--m-tap) var(--e);
 }
@@ -662,38 +690,39 @@ a, button { -webkit-tap-highlight-color: transparent; }
   --ac-dim:    rgb(var(--nv-ac-rgb) / .22);
   --hl-rgb:    var(--nv-hl-rgb);
   --hl-lt:     var(--nv-hl-lt);
-  --hl-hi:     var(--nv-hl-hi);
   --hl-dk:     var(--nv-hl-dk);
   --hl-dim:    rgb(var(--nv-hl-rgb) / .25);
   color: var(--nv-text);
   background: linear-gradient(168deg, var(--nv-bg-a), var(--nv-bg-b));
-  box-shadow: inset 0 1px 0 var(--edge);
+  box-shadow: inset 0 var(--rule) 0 var(--edge);
 }
 /* the section label sits quietly on the navy; the vivid blue belongs to
    things you can act on, not to a caption */
 .experience .eyebrow { color: var(--nv-label); }
 .experience .eyebrow i { background: var(--nv-rule); }
 .exp-grid { display: grid; grid-template-columns: .82fr 1.18fr; gap: var(--gap-col); align-items: start; }
-.exp-head { position: sticky; top: 7rem; }
-.rail { position: relative; padding-left: clamp(1.4rem, 2.6vw, 2.2rem); }
+/* clears the masthead by one step of the ramp, so it is tied to the
+   bar rather than to a number that happened to look right */
+.exp-head { position: sticky; top: calc(var(--head-h) + var(--s-7)); }
+.rail { position: relative; padding-left: var(--rail-indent); }
 .rail::before {
-  content: ""; position: absolute; left: 0; top: .5rem; bottom: .5rem; width: 1px;
+  content: ""; position: absolute; left: 0; top: .5rem; bottom: .5rem; width: var(--rule);
   background: linear-gradient(180deg, var(--ac-dk), var(--line) 55%, transparent);
   transform: scaleY(var(--rail, 1)); transform-origin: 50% 0;
 }
 .js .rail::before { --rail: 0; transition: transform var(--m-snap) linear; }
 .rail > li { position: relative; }
-.rail > li + li { margin-top: clamp(2.2rem, 4vw, 3.4rem); }
+.rail > li + li { margin-top: var(--gap-entry); }
 .rail > li::before {
-  content: ""; position: absolute; left: calc(clamp(1.4rem, 2.6vw, 2.2rem) * -1); top: .62rem;
-  width: 7px; height: 7px; margin-left: -3px; border-radius: 50%;
+  content: ""; position: absolute; left: calc(var(--rail-indent) * -1); top: .62rem;
+  width: var(--dot); height: var(--dot); margin-left: calc(var(--dot) / -2); border-radius: 50%;
   background: var(--hl); box-shadow: 0 0 0 4px var(--bg-1), 0 0 14px rgb(var(--hl-rgb) / .5);
 }
 .rail > li.muted-item::before { background: var(--line-2); box-shadow: 0 0 0 4px var(--bg-1); }
 .yr { display: flex; align-items: center; gap: var(--s-3); color: var(--text-3); font-size: var(--t-2xs); font-weight: var(--w-semi); letter-spacing: var(--tr-label-sm); text-transform: uppercase; }
 .rail > li:not(.muted-item) .yr { color: var(--ac); }
 .now {
-  padding: .14rem .5rem; border: 1px solid var(--hl-dim); border-radius: var(--r-pill);
+  padding: .14rem .5rem; border: var(--rule) solid var(--hl-dim); border-radius: var(--r-pill);
   color: var(--hl-lt); font-size: var(--t-micro); letter-spacing: var(--tr-label-sm);
 }
 .rail h3 { margin: .7rem 0 .7rem; font-size: var(--t-4); letter-spacing: var(--tr-4); font-weight: var(--w-medium); }
@@ -702,15 +731,15 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .muted-item > p:not(.yr) { color: var(--text-3); }
 .rail ul { margin-top: var(--s-5); display: grid; gap: var(--s-3); }
 .rail ul li { position: relative; padding-left: var(--s-5); color: var(--text-3); font-size: var(--t-sm); line-height: var(--lh-body); max-width: var(--measure); }
-.rail ul li::before { content: ""; position: absolute; left: 0; top: .7em; width: .5rem; height: 1px; background: var(--ac-dk); }
+.rail ul li::before { content: ""; position: absolute; left: 0; top: .7em; width: .5rem; height: var(--rule); background: var(--ac-dk); }
 
 /* ─────────────────────────────  CAPABILITIES  ─────────────────────── */
 .cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap-card); }
 .cap {
   position: relative; isolation: isolate; overflow: hidden; border-radius: var(--r);
-  padding: var(--pad-card); border: 1px solid var(--line);
+  padding: var(--pad-card); border: var(--rule) solid var(--line);
   background: linear-gradient(170deg, var(--bg-2), rgb(var(--bg-rgb) / .4));
-  box-shadow: inset 0 1px 0 var(--edge), var(--lift);
+  box-shadow: inset 0 var(--rule) 0 var(--edge), var(--lift);
   transition: border-color var(--m-tap) var(--e), transform var(--m-tap) var(--e), background var(--m-tap) var(--e), box-shadow var(--m-tap) var(--e);
 }
 .cap::after {
@@ -725,11 +754,11 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .cap h3 { margin: .8rem 0 1.3rem; font-size: var(--t-5); letter-spacing: var(--tr-4); font-weight: var(--w-medium); }
 .tags { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .tags li {
-  padding: .4rem .72rem; border: 1px solid var(--line-2); border-radius: var(--r-pill);
+  padding: .4rem .72rem; border: var(--rule) solid var(--line-2); border-radius: var(--r-pill);
   color: var(--text-2); font-size: var(--t-2xs); line-height: var(--lh-snug); transition: border-color var(--m-tint), color var(--m-tint);
 }
 .tags li:hover { border-color: var(--hl-dk); color: var(--hl-lt); }
-.credentials { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap-col); margin-top: var(--gap-head); padding-top: var(--gap-row); border-top: 1px solid var(--line); }
+.credentials { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap-col); margin-top: var(--gap-head); padding-top: var(--gap-row); border-top: var(--rule) solid var(--line); }
 .cred p { font-size: var(--t-sm); line-height: var(--lh-body); }
 .cred p + p { margin-top: var(--s-2); }
 .cred .dim { color: var(--text-3); font-size: var(--t-xs); }
@@ -737,9 +766,9 @@ a, button { -webkit-tap-highlight-color: transparent; }
 /* ─────────────────────────────  CONTACT  ──────────────────────────── */
 .contact {
   position: relative; isolation: isolate; overflow: hidden;
-  padding-block: var(--sec-y); border-top: 1px solid var(--line);
+  padding-block: var(--sec-y); border-top: var(--rule) solid var(--line);
   background: var(--contact-bg);
-  box-shadow: inset 0 1px 0 var(--edge);
+  box-shadow: inset 0 var(--rule) 0 var(--edge);
 }
 /* Centred, to answer the hero. Everything between the two runs on one
    left spine because it is a document being read; these two are not.
@@ -750,7 +779,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .contact .eyebrow { justify-content: center; }
 /* the eyebrow rule mirrored, so a centred label is symmetrical */
 .contact .eyebrow::after {
-  content: ""; width: 1.6rem; height: 1px; background: var(--hl-dk);
+  content: ""; width: 1.6rem; height: var(--rule); background: var(--hl-dk);
   transform-origin: 100% 50%; transition: transform var(--m-plane) var(--e) var(--m-lag);
 }
 .js .contact .eyebrow.reveal::after { transform: scaleX(0); }
@@ -767,7 +796,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .mailto .icon { width: 1.1em; height: 1.1em; stroke-width: 1.5; transition: transform var(--m-tap) var(--e); }
 .mailto::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--rule-2);
   background: currentColor; transform: scaleX(1); transform-origin: 0 50%;
   transition: transform var(--m-tap) var(--e);
 }
@@ -793,7 +822,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .doc-lede { margin-top: var(--s-5); max-width: var(--measure); color: var(--text-2); font-size: var(--t-lead); line-height: var(--lh-body); }
 .doc-body { max-width: var(--measure); }
 .doc-body h2 {
-  margin-top: var(--s-9); padding-top: var(--s-4); border-top: 1px solid var(--line);
+  margin-top: var(--s-9); padding-top: var(--s-4); border-top: var(--rule) solid var(--line);
   font-size: var(--t-5); line-height: var(--lh-snug);
   letter-spacing: var(--tr-4); font-weight: var(--w-medium);
 }
@@ -802,14 +831,14 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .doc-body a { color: var(--hl); text-decoration: underline; text-decoration-color: var(--hl-dim); text-underline-offset: .22em; transition: text-decoration-color var(--m-tint), color var(--m-tint); }
 .doc-body a:hover { color: var(--hl-lt); text-decoration-color: currentColor; }
 .doc-body code {
-  padding: .1em .4em; border: 1px solid var(--line); border-radius: var(--r);
+  padding: .1em .4em; border: var(--rule) solid var(--line); border-radius: var(--r);
   background: var(--bg-2); font-size: var(--t-xs); font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
-.doc-meta { margin-top: var(--s-9); padding-top: var(--s-4); border-top: 1px solid var(--line); color: var(--text-3); font-size: var(--t-2xs); }
+.doc-meta { margin-top: var(--s-9); padding-top: var(--s-4); border-top: var(--rule) solid var(--line); color: var(--text-3); font-size: var(--t-2xs); }
 .doc-actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-8); }
 
 /* the 404 is the same page, centred */
-.doc.lost { display: grid; place-content: center; justify-items: center; text-align: center; min-height: min(72svh, 40rem); }
+.doc.lost { display: grid; place-content: center; justify-items: center; text-align: center; min-height: min(72svh, var(--measure)); }
 .doc.lost .doc-head { margin-bottom: 0; display: grid; justify-items: center; }
 .doc.lost h1 { font-size: var(--t-1); line-height: var(--lh-display); letter-spacing: var(--tr-display); }
 .doc.lost .doc-lede { margin-inline: auto; }
@@ -818,48 +847,32 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .nav-back .icon { transform: rotate(180deg); }
 .nav-back:hover .icon { transform: rotate(180deg) translateX(-3px); }
 
-/* ─────────────────────────────  FOOTER  ───────────────────────────── */
 /* ─────────────────────────────  FOOTER  ──────────────────────────
-   The masthead again, at the end of the document: the same lockup on
-   the left, the same links on the right, the same left spine. The
-   header opens by saying who she is; the foot closes by saying it
-   again, and the colophon sits under its own rule.
+   The masthead again, at the end of the document, and literally so:
+   the lockup in the foot is the same element with the same rules as
+   the one in the head, down to hiding the title at the same width. The
+   only difference is where it takes you, and since the head's lockup
+   already points at #top, there is not even that. No arrow, no "Back
+   to top" link: one gesture, one control, in two places.
 
-   There is no "Back to top" link any more. The name was already the
-   way home in the header, and an explicit second control for the same
-   gesture is the kind of thing a page accumulates rather than designs.
-   The lockup carries a small arrow instead, so the affordance is
-   visible without being a separate piece of furniture. */
-footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow: inset 0 1px 0 var(--edge); }
+   Height is the other half of the relationship. The masthead is one
+   --head-h; the foot is two, one for the lockup and its links and one
+   for the colophon, each the same height as the bar at the top of the
+   page. That is why the foot has weight without looking bolted on, and
+   why its two bands are equal by construction rather than by a pair of
+   paddings that happen to add up. */
+footer { border-top: var(--rule) solid var(--line); background: var(--bg-1); box-shadow: inset 0 var(--rule) 0 var(--edge); }
 .experience ::selection { background: var(--hl-lt); color: var(--nv-bg-b); }
-.footer-top {
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: var(--s-5) var(--s-7);
-  padding-block: var(--s-7) var(--s-6);
+.footer-top, .footer-base {
+  display: flex; align-items: center; flex-wrap: wrap;
+  min-height: var(--head-h); padding-block: var(--s-4);
 }
-/* the title stays in the foot at every width — the header hides it to
-   stop the sticky bar wrapping, and the foot has no such constraint */
-.footer-identity .role { display: inline-block; }
-/* The arrow leads the lockup. Trailing it, a narrow foot wrapped the
-   title to a second line and left the arrow orphaned below it; leading,
-   it always travels with the name — and it is the one thing that tells
-   you this copy of the lockup goes up rather than home. */
-.footer-identity .up {
-  align-self: center; width: .85rem; height: .85rem; flex: none; color: var(--ac-dk);
-  transform: rotate(-90deg);
-  transition: transform var(--m-tap) var(--e), color var(--m-tint);
-}
-.footer-identity .wordmark { transition: color var(--m-tint); }
-.footer-identity:hover .wordmark, .footer-identity:focus-visible .wordmark { color: var(--hl); }
-.footer-identity:hover .up, .footer-identity:focus-visible .up {
-  color: var(--hl); transform: rotate(-90deg) translateX(2px);
-}
+.footer-top { justify-content: space-between; gap: var(--s-4) var(--s-7); }
 .footer-nav { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6); font-size: var(--t-xs); }
 .footer-nav a { color: var(--text-3); transition: color var(--m-tint); }
 .footer-nav a:hover { color: var(--hl); }
 .footer-base {
-  display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5);
-  padding-block: var(--s-5); border-top: 1px solid var(--line);
+  gap: var(--s-2) var(--s-5); border-top: var(--rule) solid var(--line);
   color: var(--text-3); font-size: var(--t-2xs);
 }
 
@@ -923,8 +936,8 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .menu-toggle:not([hidden]) {
     position: relative; z-index: 2;
     display: inline-flex; align-items: center; gap: var(--s-3);
-    min-height: 2.6rem; padding: .5rem .9rem;
-    border: 1px solid var(--line-2); border-radius: var(--r-pill);
+    min-height: var(--ctl-h-sm); padding: var(--s-2) var(--s-4);
+    border: var(--rule) solid var(--line-2); border-radius: var(--r-pill);
     font-size: var(--t-xs); font-weight: var(--w-medium); color: var(--text); cursor: pointer;
     background: var(--bg-2); box-shadow: var(--lift);
     transition: border-color var(--m-tint), color var(--m-tint), background var(--m-tint);
@@ -951,16 +964,22 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
      first and then cross; closing, they uncross first and then part.
      translate and rotate are separate properties, so each beat can hold
      its own delay without a keyframe in sight. */
-  .menu-icon { display: grid; gap: 5px; width: .95rem; }
+  .menu-icon { display: grid; gap: var(--bar-gap); width: var(--icon); }
   .menu-icon i {
-    display: block; height: 1.5px; border-radius: 1px; background: currentColor;
+    display: block; height: var(--bar-h); border-radius: var(--bar-h); background: currentColor;
     transition: translate var(--m-exit) var(--e2) var(--m-snap), rotate var(--m-exit) var(--e);
   }
   .menu-toggle[aria-expanded="true"] .menu-icon i {
     transition: translate var(--m-exit) var(--e2), rotate var(--m-tap) var(--e) var(--m-snap);
   }
-  .menu-toggle[aria-expanded="true"] .menu-icon i:first-child { translate: 0 3.25px; rotate: 45deg; }
-  .menu-toggle[aria-expanded="true"] .menu-icon i:last-child { translate: 0 -3.25px; rotate: -45deg; }
+  /* half the distance between the two bars' centres, derived rather
+     than measured, so the cross stays a cross if either value moves */
+  .menu-toggle[aria-expanded="true"] .menu-icon i:first-child {
+    translate: 0 calc((var(--bar-gap) + var(--bar-h)) / 2); rotate: 45deg;
+  }
+  .menu-toggle[aria-expanded="true"] .menu-icon i:last-child {
+    translate: 0 calc((var(--bar-gap) + var(--bar-h)) / -2); rotate: -45deg;
+  }
 
   .nav-open { overflow: hidden; }
   .nav-open body { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; }
@@ -970,13 +989,13 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
     --sheet-step: calc(var(--m-step) / 2);
     position: fixed; inset: var(--head-h-sm) 0 0; z-index: 1;
     display: flex; flex-direction: column; align-items: stretch; gap: 0;
-    padding: clamp(1rem, 4vw, 1.8rem) 5.5% calc(1.8rem + env(safe-area-inset-bottom));
+    padding: clamp(1rem, 4vw, 1.8rem) var(--gutter) calc(1.8rem + env(safe-area-inset-bottom));
     /* The sheet is the lifted tone, not the page tone. They were the
        same colour, which made the wipe invisible: the plane could only
        be inferred from the text it covered. One step of value and the
        edge reads as an edge. */
     background: var(--bg-1); overflow-y: auto; overscroll-behavior: contain;
-    box-shadow: inset 0 1px 0 var(--edge);
+    box-shadow: inset 0 var(--rule) 0 var(--edge);
     /* the plane unrolls from the masthead's own hairline — the same
        wipe the project frames use, so the sheet belongs to the page
        rather than being borrowed from an app */
@@ -991,14 +1010,14 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .primary-nav > a:not(.btn) {
     position: relative;
     display: flex; align-items: center; gap: var(--s-4);
-    padding: 1.15rem .2rem;
+    padding: var(--s-5) var(--s-1);
     font-size: var(--t-4); font-weight: var(--w-medium); letter-spacing: var(--tr-4); color: var(--text);
     opacity: 0; transform: translate3d(0, 10px, 0);
     transition: opacity var(--m-exit) linear, transform var(--m-exit) var(--e2), color var(--m-tint);
   }
   /* the rule under each line is drawn, not printed */
   .primary-nav > a::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--rule);
     background: var(--line); transform: scaleX(0); transform-origin: 0 50%;
     transition: transform var(--m-exit) var(--e2);
   }
@@ -1039,7 +1058,7 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
     --sd: calc(var(--m-lag) + var(--sheet-step) * 5);
     transition: opacity var(--m-tap) linear var(--sd), transform var(--m-tap) var(--e) var(--sd);
   }
-  .nav-cta .btn { width: 100%; min-height: 3.2rem; font-size: var(--t-sm); }
+  .nav-cta .btn { width: 100%; min-height: var(--ctl-h-lg); font-size: var(--t-sm); }
   .hero { padding-top: var(--s-8); }
   .display { font-size: var(--t-display); letter-spacing: var(--tr-display); }
   .hero-meta { font-size: var(--t-2xs); }
@@ -1047,23 +1066,21 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .case-head { grid-template-columns: auto 1fr; }
   .case-year { grid-column: 2; justify-self: end; }
   .case-kind { display: none; }
-  /* the foot stacks rather than squeezing: lockup, then links */
-  .footer-top { justify-content: flex-start; gap: var(--s-5); }
-  .footer-nav { flex-basis: 100%; gap: var(--s-3) var(--s-5); }
-}
-/* the foot's lockup is the header's, and at some width the two halves
-   stop fitting side by side. The header hides the title there; the foot
-   drops it to its own line instead, because a colophon is the one place
-   the full title belongs. */
-@media (max-width: 460px) {
-  /* .identity is flex:none, so without a cap the lockup sizes to
-     max-content and its halves never wrap, they just leave the shell */
-  .footer-identity { flex: 0 1 100%; max-width: 100%; flex-wrap: wrap; gap: var(--s-1) var(--s-3); }
-  .footer-identity .role { padding-left: 0; }
-  .footer-identity .role::before { content: none; }
+  /* The foot keeps its rule on a narrow page: it becomes three rows
+     instead of two — lockup, links, colophon — and each of them is
+     still exactly one masthead tall. */
+  .footer-top, .footer-base { min-height: var(--head-h-sm); }
+  .footer-top {
+    flex-direction: column; align-items: stretch; justify-content: center;
+    gap: 0; padding-block: 0;
+  }
+  .footer-top > * { display: flex; align-items: center; min-height: var(--head-h-sm); }
+  .footer-nav { gap: var(--s-3) var(--s-5); }
 }
 @media (max-width: 420px) {
-  .shell { width: 90%; }
+  /* the page's edge comes in a little; the sheet follows it, because
+     both read the same token */
+  :root { --gutter: 5%; }
   .btn { padding-inline: var(--s-4); font-size: var(--t-xs); }
   .metrics dd { font-size: var(--t-3); }
 }
@@ -1096,7 +1113,7 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
     color-scheme: light;
     --text: #000; --text-2: #1f1f1f; --text-3: #3a3a3a;
     --ac: #333; --ac-dk: #8d8d8d;
-    --hl: #1a1a1a; --hl-lt: #1a1a1a; --hl-hi: #1a1a1a; --hl-dk: #8d8d8d;
+    --hl: #1a1a1a; --hl-lt: #1a1a1a; --hl-dk: #8d8d8d;
     --hl-dim: #c8c8c8; --hl-on: #fff; --edge: transparent; --lift: none; --lift-hi: none;
     --grain-op: 0; --aura-1: transparent; --aura-2: transparent;
     --ac-dim: #c8c8c8; --text-hi: #000; --display-2: #000;
@@ -1143,7 +1160,7 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
     background: #fff; color: #000; box-shadow: none;
     --text: #000; --text-2: #1f1f1f; --text-3: #3a3a3a;
     --ac: #333; --ac-dk: #8d8d8d;
-    --hl: #1a1a1a; --hl-lt: #1a1a1a; --hl-hi: #1a1a1a; --hl-dk: #8d8d8d;
+    --hl: #1a1a1a; --hl-lt: #1a1a1a; --hl-dk: #8d8d8d;
     --line: #c8c8c8; --line-2: #c8c8c8; --bg-1: #fff; --edge: transparent; --lift: none;
   }
   .cap, .rail > li, .cred { break-inside: avoid; page-break-inside: avoid; }

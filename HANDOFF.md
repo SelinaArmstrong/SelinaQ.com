@@ -6,7 +6,7 @@ committed. What is left is getting the commits off this machine and the
 current build onto the live site.
 
 Repo: `SelinaQ.com`, branch `main`, clean working
-tree, **fifteen commits ahead of where anything has actually been
+tree, **sixteen commits ahead of where anything has actually been
 published**.
 
 ---
@@ -42,7 +42,7 @@ python3 -m http.server 8781 --directory public
 
 ## Task 1 — publish the current build
 
-The live site is **behind this checkout by fifteen commits**. Everything in them
+The live site is **behind this checkout by sixteen commits**. Everything in them
 is design work that has been reviewed and verified locally; none of it is on
 the web.
 
@@ -124,14 +124,28 @@ the same situation, so they share one set of values and cannot drift. The
 favicons and the Open Graph card follow the same palette; if you change the
 accent, regenerate both (`design/og-card.html` carries its command).
 
-**The foot is the masthead again.** Same lockup, same links, same spine, with
-the colophon under its own rule. There is deliberately no "Back to top" link:
-the name was already the way home in the header, so the footer's copy of the
-lockup carries a leading arrow and goes up instead. The arrow leads rather than
-trails because a narrow foot wraps the title to a second line and would orphan
-it. `.footer-identity` also needs the `flex: 0 1 100%; max-width: 100%` it gets
-under 460px — `.identity` is `flex: none`, so without a cap the lockup sizes to
-max-content and simply leaves the shell instead of wrapping.
+**The foot is the masthead again, literally.** The lockup in the foot is the
+same `.identity` element under the same rules as the one in the head, down to
+hiding the title at the same width, and both point at `#top`. No arrow, no
+"Back to top" link: one gesture, one control, in two places.
+
+Height carries the other half of that relationship. The masthead is one
+`--head-h`; the foot is two, one band for the lockup and its links and one for
+the colophon, each the same height as the bar at the top of the page. Under
+760px it becomes three rows — lockup, links, colophon — still one masthead
+each. The bands are equal by construction, not by paddings that happen to add
+up, so do not replace the `min-height` with padding.
+
+**So is everything else the page draws with.** Icon size, hairline and rule
+weights, control heights, the bullet and the timeline node, the rail indent,
+the page gutter and the title page's four fluid steps are all tokens in
+`:root`. Three relationships are stated in CSS rather than left to match by
+coincidence, and they are the ones to preserve: the sticky section heading
+clears the masthead (`calc(var(--head-h) + var(--s-7))`), the full-bleed mobile
+sheet pads to the same `--gutter` the shell leaves, and the menu mark's cross
+is derived from the bar height and the gap between the bars rather than
+measured off them. Nothing in the body of the file sets a colour, a type value,
+a duration or a design length as a literal.
 
 **Motion is tokenised too.** Six durations in `:root` (`--m-snap` through
 `--m-draw`), chosen by what is moving, plus `--m-step` for a stagger and
@@ -159,6 +173,14 @@ If you need a new scroll effect, cache its geometry the same way.
 Related: the page's ambient gradient is its own fixed layer (`.field`), not
 `background-attachment: fixed` on `body`, which repainted the whole page per
 frame. The grain overlay carries no `mix-blend-mode` for the same reason.
+
+**Both project screenshots are captured at one viewport.** The frames take
+whatever height their image needs, so two captures at different viewports
+produce two frames of different heights side by side in the same section —
+which is what the page had. Equal heights come from equal captures, not from a
+CSS crop. `design/capture-shots.sh` recaptures both at the same viewport; use
+it rather than shooting one of them by hand, and update the `width`/`height`
+attributes and the alt text if the delivered size or the product changes.
 
 **The project screenshots are never cropped.** `.case-media.shot` takes
 whatever height its image needs (`aspect-ratio: auto`, `height: auto`) and

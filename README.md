@@ -20,7 +20,8 @@ public/          ← the deploy root. Everything that ships lives here.
   assets/        ← screenshots, the Geist woff2 subset, the favicons, OG card
 content/         ← the master resume (.docx). Source of truth for every
                    claim on the page. NOT deployed.
-design/          ← visual-direction studies. NOT deployed.
+design/          ← visual-direction studies, the Open Graph card template
+                   and capture-shots.sh. NOT deployed.
 .claude/         ← local preview config for Claude Code. NOT deployed.
 ```
 
@@ -54,6 +55,9 @@ The footer links to the privacy policy at `/privacy/`.
 - `assets/selina-armstrong.jpg` — the 1200×630 Open Graph card. It is rendered
   from `design/og-card.html`, which carries the command; regenerate it if the
   name, title or palette changes.
+- `assets/contractledger-dashboard.webp`, `asylumcompass-home.webp` — both are
+  captured at the same viewport by `design/capture-shots.sh`. The frames on the
+  page take the image's own height, so equal heights depend on equal captures.
 - `assets/favicon-32.png`, `favicon-64.png`, `apple-touch-icon.png` — the mark
   is the Geist "S", white on azure, full bleed. Each size is rendered natively
   rather than downscaled from one master, so the small ones stay crisp.

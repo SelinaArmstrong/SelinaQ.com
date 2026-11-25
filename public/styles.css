@@ -63,25 +63,39 @@
   /* images adapt to the theme rather than being baked for one of them */
   --contact-bg:  linear-gradient(180deg, var(--bg-1), rgb(var(--bg-rgb) / 0) 72%);
 
-  /* ── the inverted plane ──  one navy band, its palette kept here so it
-     can be tuned in one place rather than inside the section rule */
-  --nv-bg-a:   #122C5C;
-  --nv-bg-b:   #0B1C3D;
-  --nv-ring:   #10264F;
-  --nv-line:   #27406C;
-  --nv-line-2: #35507F;
-  --nv-rule:   #4C618C;
-  --nv-text:   #F2F6FC;
-  --nv-text-2: #B4C4DE;
-  --nv-text-3: #9BADCB;
-  --nv-ac-rgb: 159 179 212;
+  /* ── the inverted plane ──────────────────────────────────────────
+     This was a saturated navy: #122C5C, by a distance the most
+     chromatic area on a page whose blue is otherwise a thin accent.
+     It read as a second website rather than a second surface, and it
+     fought the AsylumCompass screenshot sitting directly above it,
+     which is navy too.
+
+     It is now the page's own ink used as a surface — a cool slate with
+     the same hue as --text, three and a half times less chromatic. A
+     chapter break, not a change of brand.
+
+     Everything on the plane other than the plane itself is the "on
+     dark" ramp, which is the same ramp the dark theme uses. One set of
+     values for light ground, one for dark ground, and a dark band in a
+     light theme is simply the second set. [data-theme="dark"] aliases
+     these rather than repeating them, so the two cannot drift. */
+  --nv-bg-a:   #1A212C;
+  --nv-bg-b:   #0F141B;
+  --nv-ring:   #141A24;   /* the ring punched around each rail dot */
+  --nv-line:   #2B3340;
+  --nv-line-2: #3A4352;
+  --nv-rule:   #5A6472;
+  --nv-text:   #EDEFF2;
+  --nv-text-2: #A7ADB6;
+  --nv-text-3: #868D97;
+  --nv-ac-rgb: 194 201 212;
   --nv-ac:     rgb(var(--nv-ac-rgb));
-  --nv-ac-dk:  #5B74A3;
-  --nv-label:  #A9B8D4;
-  --nv-hl-rgb: 127 179 255;
-  --nv-hl-lt:  #A9CEFF;
-  --nv-hl-hi:  #D5E7FF;
-  --nv-hl-dk:  #4D7CC4;
+  --nv-ac-dk:  #717A85;
+  --nv-label:  #A7ADB6;
+  --nv-hl-rgb: 88 166 255;
+  --nv-hl-lt:  #9ECBFF;
+  --nv-hl-hi:  #CFE4FF;
+  --nv-hl-dk:  #2F6FBF;
 
   /* ── type ──  one ramp. Nothing below sets a size that is not on it. */
   --t-display: clamp(3.3rem, 11.5vw, 10.5rem);  /* the name */
@@ -183,20 +197,23 @@
   --lift:      0 0 transparent;
   --lift-hi:   0 0 transparent;
 
-  --text:      #EDEFF2;
-  --text-2:    #A7ADB6;
-  --text-3:    #868D97;
+  /* the "on dark" ramp lives once, at :root, as --nv-*; the inverted
+     band in the light theme and the whole dark theme are the same
+     situation — ink on a dark plane — and now share one set of values */
+  --text:      var(--nv-text);
+  --text-2:    var(--nv-text-2);
+  --text-3:    var(--nv-text-3);
   --text-hi:   #FBFCFE;
   --display-2: #79808B;
 
-  --ac-rgb:    194 201 212;
-  --ac-dk:     #717A85;
+  --ac-rgb:    var(--nv-ac-rgb);
+  --ac-dk:     var(--nv-ac-dk);
   --ac-dim:    rgb(var(--ac-rgb) / .18);
 
-  --hl-rgb:    88 166 255;
-  --hl-lt:     #9ECBFF;
-  --hl-hi:     #CFE4FF;
-  --hl-dk:     #2F6FBF;
+  --hl-rgb:    var(--nv-hl-rgb);
+  --hl-lt:     var(--nv-hl-lt);
+  --hl-hi:     var(--nv-hl-hi);
+  --hl-dk:     var(--nv-hl-dk);
   --hl-on:     #06121F;
   --hl-dim:    rgb(var(--hl-rgb) / .22);
 
@@ -802,12 +819,49 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .nav-back:hover .icon { transform: rotate(180deg) translateX(-3px); }
 
 /* ─────────────────────────────  FOOTER  ───────────────────────────── */
+/* ─────────────────────────────  FOOTER  ──────────────────────────
+   The masthead again, at the end of the document: the same lockup on
+   the left, the same links on the right, the same left spine. The
+   header opens by saying who she is; the foot closes by saying it
+   again, and the colophon sits under its own rule.
+
+   There is no "Back to top" link any more. The name was already the
+   way home in the header, and an explicit second control for the same
+   gesture is the kind of thing a page accumulates rather than designs.
+   The lockup carries a small arrow instead, so the affordance is
+   visible without being a separate piece of furniture. */
 footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow: inset 0 1px 0 var(--edge); }
 .experience ::selection { background: var(--hl-lt); color: var(--nv-bg-b); }
-.footer-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); padding-block: var(--s-6); color: var(--text-3); font-size: var(--t-2xs); }
-.colophon { color: var(--text-3); }
-.footer-inner .up { transform: rotate(-90deg); }
-.footer-inner a:hover .up { transform: rotate(-90deg) translateX(3px); }
+.footer-top {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--s-5) var(--s-7);
+  padding-block: var(--s-7) var(--s-6);
+}
+/* the title stays in the foot at every width — the header hides it to
+   stop the sticky bar wrapping, and the foot has no such constraint */
+.footer-identity .role { display: inline-block; }
+/* The arrow leads the lockup. Trailing it, a narrow foot wrapped the
+   title to a second line and left the arrow orphaned below it; leading,
+   it always travels with the name — and it is the one thing that tells
+   you this copy of the lockup goes up rather than home. */
+.footer-identity .up {
+  align-self: center; width: .85rem; height: .85rem; flex: none; color: var(--ac-dk);
+  transform: rotate(-90deg);
+  transition: transform var(--m-tap) var(--e), color var(--m-tint);
+}
+.footer-identity .wordmark { transition: color var(--m-tint); }
+.footer-identity:hover .wordmark, .footer-identity:focus-visible .wordmark { color: var(--hl); }
+.footer-identity:hover .up, .footer-identity:focus-visible .up {
+  color: var(--hl); transform: rotate(-90deg) translateX(2px);
+}
+.footer-nav { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6); font-size: var(--t-xs); }
+.footer-nav a { color: var(--text-3); transition: color var(--m-tint); }
+.footer-nav a:hover { color: var(--hl); }
+.footer-base {
+  display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5);
+  padding-block: var(--s-5); border-top: 1px solid var(--line);
+  color: var(--text-3); font-size: var(--t-2xs);
+}
 
 /* ───────────────────────  SCROLL-DRIVEN MOTION  ────────────────────
    Where the browser can tie an animation to the scroll position itself,
@@ -993,8 +1047,20 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .case-head { grid-template-columns: auto 1fr; }
   .case-year { grid-column: 2; justify-self: end; }
   .case-kind { display: none; }
-  .footer-inner { flex-wrap: wrap; justify-content: flex-start; gap: var(--s-2) var(--s-5); }
-  .colophon { order: 3; flex-basis: 100%; }
+  /* the foot stacks rather than squeezing: lockup, then links */
+  .footer-top { justify-content: flex-start; gap: var(--s-5); }
+  .footer-nav { flex-basis: 100%; gap: var(--s-3) var(--s-5); }
+}
+/* the foot's lockup is the header's, and at some width the two halves
+   stop fitting side by side. The header hides the title there; the foot
+   drops it to its own line instead, because a colophon is the one place
+   the full title belongs. */
+@media (max-width: 460px) {
+  /* .identity is flex:none, so without a cap the lockup sizes to
+     max-content and its halves never wrap, they just leave the shell */
+  .footer-identity { flex: 0 1 100%; max-width: 100%; flex-wrap: wrap; gap: var(--s-1) var(--s-3); }
+  .footer-identity .role { padding-left: 0; }
+  .footer-identity .role::before { content: none; }
 }
 @media (max-width: 420px) {
   .shell { width: 90%; }
@@ -1040,7 +1106,8 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .grain, .progress, .aura,
   .hero::before, .case-shot,
   .site-header, .skip-link, .actions, .status-pill, .nav-cta,
-  .case-media, footer .up { display: none !important; }
+  /* the foot's nav is all in-page anchors; on paper it is noise */
+  .case-media, footer .up, .footer-nav { display: none !important; }
   .js .rise, .js .reveal, .js .rise-y,
   .js .split .line > span { opacity: 1 !important; transform: none !important; }
   .js.is-ready .display::after { display: none; }   /* the redline sweep */

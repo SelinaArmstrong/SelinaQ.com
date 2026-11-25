@@ -17,7 +17,7 @@ public/          ← the deploy root. Everything that ships lives here.
   robots.txt
   sitemap.xml
   Selina-Armstrong-Resume.pdf
-  assets/        ← images, the Geist woff2 subset, monogram, OG card
+  assets/        ← screenshots, the Geist woff2 subset, the favicons, OG card
 content/         ← the master resume (.docx). Source of truth for every
                    claim on the page. NOT deployed.
 design/          ← visual-direction studies. NOT deployed.
@@ -51,9 +51,12 @@ The footer links to the privacy policy at `/privacy/`.
 ## Things to keep in sync by hand
 
 - `sitemap.xml` — `<lastmod>` when the page changes meaningfully.
-- `assets/selina-armstrong.jpg` — the 1200×630 Open Graph card. It is generated
-  from an HTML template, not photographed; regenerate it if the name, title or
-  palette changes.
+- `assets/selina-armstrong.jpg` — the 1200×630 Open Graph card. It is rendered
+  from `design/og-card.html`, which carries the command; regenerate it if the
+  name, title or palette changes.
+- `assets/favicon-32.png`, `favicon-64.png`, `apple-touch-icon.png` — the mark
+  is the Geist "S", white on azure, full bleed. Each size is rendered natively
+  rather than downscaled from one master, so the small ones stay crisp.
 - `Selina-Armstrong-Resume.pdf` — exported from
   `content/Selina-Armstrong-Resume-master.docx`, which is the baseline for the
   wording on the page. When the master changes, re-check the hero line, the

@@ -6,7 +6,7 @@ committed. What is left is getting the commits off this machine and the
 current build onto the live site.
 
 Repo: `SelinaQ.com`, branch `main`, clean working
-tree, **fourteen commits ahead of where anything has actually been
+tree, **fifteen commits ahead of where anything has actually been
 published**.
 
 ---
@@ -42,7 +42,7 @@ python3 -m http.server 8781 --directory public
 
 ## Task 1 — publish the current build
 
-The live site is **behind this checkout by fourteen commits**. Everything in them
+The live site is **behind this checkout by fifteen commits**. Everything in them
 is design work that has been reviewed and verified locally; none of it is on
 the web.
 
@@ -112,6 +112,26 @@ follow or track. Add a colour by adding a token, not a literal.
 darkest light surface. Do not go dimmer. The inverted navy band
 (`.experience`) re-declares the whole token set in its own scope; if you touch
 it, re-check the numbers there too.
+
+**There is no navy.** The Trajectory band used to be a saturated #122C5C,
+which made it the most chromatic area on a page whose blue is otherwise a thin
+accent — a second brand rather than a second surface, fighting the navy
+AsylumCompass screenshot directly above it. The band is now the page's own ink
+used as a surface, a cool slate (`--nv-bg-a/b`). Everything else on that plane
+is the "on dark" ramp, defined once at `:root` as `--nv-*` and **aliased by
+`[data-theme="dark"]`** — a dark band in a light theme and the dark theme are
+the same situation, so they share one set of values and cannot drift. The
+favicons and the Open Graph card follow the same palette; if you change the
+accent, regenerate both (`design/og-card.html` carries its command).
+
+**The foot is the masthead again.** Same lockup, same links, same spine, with
+the colophon under its own rule. There is deliberately no "Back to top" link:
+the name was already the way home in the header, so the footer's copy of the
+lockup carries a leading arrow and goes up instead. The arrow leads rather than
+trails because a narrow foot wraps the title to a second line and would orphan
+it. `.footer-identity` also needs the `flex: 0 1 100%; max-width: 100%` it gets
+under 460px — `.identity` is `flex: none`, so without a cap the lockup sizes to
+max-content and simply leaves the shell instead of wrapping.
 
 **Motion is tokenised too.** Six durations in `:root` (`--m-snap` through
 `--m-draw`), chosen by what is moving, plus `--m-step` for a stagger and
@@ -183,6 +203,14 @@ terms. Do not invent or soften anything; if the master changes, re-check the
 hero line, the metrics, Capabilities, the timeline bullets and the project
 tags against it. Accented characters were removed deliberately: the word is
 "resume", not "résumé".
+
+The shipped PDF, `public/Selina-Armstrong-Resume.pdf`, was replaced on
+25 November 2026 from the owner's current export. It differs from
+`content/Selina-Armstrong-Resume-master.docx` by one line — the contact line
+now carries `selinaq.com` — so **the .docx in `content/` is one revision
+behind**. Nothing on the page needed changing: every figure, counterparty and
+date in the new export matches what was already there. Ask the owner for the
+current .docx before treating `content/` as authoritative again.
 
 **Accessibility.** Mobile nav is a sheet with a focus trap, scroll lock,
 Escape to close, and `aria-expanded` kept in sync. The toggle's visible word

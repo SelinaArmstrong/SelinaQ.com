@@ -1,11 +1,12 @@
 # Handoff — selinaq.com
 
 Personal site for Selina Armstrong, a senior contract specialist looking for
-contract operations / procurement / CLM roles. The site is finished and
-committed. What is left is analytics and getting it online.
+contract operations / procurement / CLM roles. The design is finished and
+committed. What is left is getting the commits off this machine and the
+current build onto the live site.
 
-Repo: `SelinaQ.com`, branch `main`, 9 commits, clean
-working tree, **no git remote configured yet**.
+Repo: `SelinaQ.com`, branch `main`, clean working
+tree, **ten commits ahead of where anything has actually been published**.
 
 ---
 
@@ -21,9 +22,10 @@ Four files do the work:
 | `public/site.js` | motion and interaction, progressive enhancement |
 | `public/404.html` | not-found page, same design |
 
-Supporting: `public/robots.txt`, `public/sitemap.xml`,
-`public/Selina-Armstrong-Resume.pdf`, `public/assets/` (images, the Geist
-woff2 subset, monogram, Open Graph card).
+Plus `public/privacy/index.html`, and supporting files: `public/robots.txt`,
+`public/sitemap.xml`, `public/Selina-Armstrong-Resume.pdf`, `public/assets/`
+(two product screenshots, the Geist woff2 subset, the Open Graph card and the
+favicons).
 
 **Not deployed, and must not be:** `content/` (the master resume .docx),
 `design/` (visual studies), `.claude/` (local preview config), `README.md`,
@@ -37,50 +39,51 @@ python3 -m http.server 8781 --directory public
 
 ---
 
-## Task 1 — GA4
+## Task 1 — publish the current build
 
-`public/index.html` has a commented block at the very end of `<head>`:
+The live site is **behind this checkout by ten commits**. Everything in them
+is design work that has been reviewed and verified locally; none of it is on
+the web.
 
-```html
-<!-- Analytics. GA4 goes here: swap G-XXXXXXXXXX for the measurement ID and
-     uncomment. ... -->
+Deployment does **not** go through git. `wrangler.jsonc` publishes `./public`
+as a Cloudflare Workers static-assets site:
+
+```jsonc
+{ "name": "selinaq-com", "assets": { "directory": "./public",
+  "not_found_handling": "404-page" } }
 ```
 
-Replace both occurrences of `G-XXXXXXXXXX` with the real measurement ID and
-uncomment. Keep it last in `<head>` and keep `async`. Nothing else on the page
-depends on it.
+So the live update is `npx wrangler deploy` from the repo root, after a
+Cloudflare login. Neither wrangler nor any Cloudflare credential is present
+on this machine — `wrangler --version` fails and there is no
+`~/.config/.wrangler`. Ask the owner to authenticate; do not go looking for
+their tokens.
 
-One consequence to handle, not to ignore: the site currently loads **no**
-third-party script and sets no cookie. Adding GA4 changes that. Check whether
-a cookie notice is wanted before shipping it, or configure GA4 in a
-cookieless / consent-mode setup. Ask the owner; do not decide silently.
+After deploying, check the live site rather than trusting the command: the
+hero, the two project screenshots, `/privacy/`, and a URL that does not exist
+(it must serve `404.html`, which is what `not_found_handling` is for).
 
-## Task 2 — Deploy
+## Task 2 — the GitHub remote
 
-No host is chosen and no platform config exists. Pick one with the owner, then:
+`origin` is set to <https://github.com/SelinaArmstrong/SelinaQ.com.git> but
+**that repository does not exist** — `git push` returns "Repository not
+found", and `gh repo view` cannot resolve it. The local `origin/main` ref is
+stale; nothing was ever pushed. The `gh` CLI here is authenticated as
+**another GitHub account**, which is not the `SelinaArmstrong` account the remote names,
+and has no related repository among its sixteen.
 
-- **Publish directory is `public/`, never the repo root.** Publishing the root
-  would put the master resume .docx and the design studies on the web.
-- Custom domain `selinaq.com`, HTTPS on, `www` redirecting to apex (or the
-  reverse — just be consistent with what `<link rel="canonical">` already says:
-  `https://selinaq.com/`).
-- `404.html` is served as the not-found page by GitHub Pages, Netlify,
-  Cloudflare Pages and Vercel without extra config; verify it actually fires.
-- On GitHub Pages a custom domain needs a `CNAME` file inside `public/`.
-- README has a per-host table with the publish-directory setting.
+Two decisions belong to the owner, not to you:
 
-## Task 3 — Git remote
+- which account owns the repository, and whether it is public or private;
+- whether `content/Selina-Armstrong-Resume-master.docx` ships with it. Its
+  content is already public as a PDF on the site and the file carries no
+  comments or tracked changes, so this is a choice rather than a leak — but
+  it is the owner's choice.
 
-The owner wants the repository at
-<https://github.com/SelinaArmstrong/SelinaQ.com>. It does not exist yet as far
-as this checkout knows. Create it, add the remote, push `main`.
+Ask, then create the repository, fix the remote if the owner is different,
+and push `main`.
 
-If the repo is public, note that `content/Selina-Armstrong-Resume-master.docx`
-goes public with it. Its content is already published as a PDF on the site and
-the file carries no comments or tracked changes, so this is a choice, not a
-leak — but confirm it is the choice the owner wants.
-
-## Task 4 — after each change
+## Task 3 — after each change
 
 - `sitemap.xml` `<lastmod>` is maintained by hand. Update it when the page
   changes meaningfully.
@@ -157,6 +160,15 @@ choice). Keep `aria-expanded` in sync with the open state.
 
 ## Known open items (not blocking)
 
-- **No portrait.** The hero is typographic. A professional photo would help a
-  recruiter trust the page faster; the layout has room for it.
+- **No portrait.** The hero is typographic and ends on a hairline into the
+  metrics. A hero band sat there through five versions — an AI render, a
+  process diagram, a signature, a measure, a score — and all five were
+  rejected before the element was removed as decoration that had no job. The
+  space is deliberately held for a professional photograph, which is the one
+  thing that belongs between a name that size and the figures under it, and
+  the single change that would do most for the page.
+- **The dark scheme is unverified by eye.** It still defines every colour
+  token the light scheme does (26 of them; only the navy band's `--nv-*` set
+  is shared on purpose, because that band is dark in both). It has not been
+  looked at since the type, spacing, link and alignment work landed.
 - `design/palettes/` is gitignored — it holds throwaway render comparisons.

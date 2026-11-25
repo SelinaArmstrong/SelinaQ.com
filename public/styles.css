@@ -418,15 +418,23 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .hero-meta { flex-direction: column; gap: .4rem; }
   .hero-meta .sep { display: none; }
 }
+/* No instruction, just a line that points and a light that falls down it.
+   It fades as soon as the page has been scrolled — a cue that stays after
+   it has been obeyed is clutter. */
 .scroll-cue {
-  position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: .6rem;
+  position: relative; z-index: 2; display: grid; justify-items: center;
   margin: clamp(2rem, 4vw, 3.2rem) 0 clamp(1.4rem, 2.5vw, 2rem);
-  color: var(--text-3); font-size: var(--t-label); letter-spacing: var(--tr-label); text-transform: uppercase;
+  transition: opacity .4s linear;
 }
-.scroll-cue i { position: relative; width: 1px; height: 3rem; background: var(--line-2); overflow: hidden; }
+.scroll-cue i {
+  position: relative; width: 1px; height: clamp(3.2rem, 6vw, 4.6rem);
+  background: linear-gradient(180deg, transparent, var(--line-2) 35%, var(--line-2));
+  overflow: hidden;
+}
 .scroll-cue i::after {
-  content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent, var(--hl));
-  animation: cue 2.6s var(--e2) infinite;
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent, var(--hl));
+  animation: cue 3.2s var(--e2) infinite;
 }
 @keyframes cue { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(100%); } }
 .hero-band { position: relative; overflow: hidden; height: clamp(12rem, 30vw, 25rem); }
@@ -922,8 +930,8 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .hero { padding-top: 2.4rem; }
   .display { font-size: var(--t-display); letter-spacing: var(--tr-display); }
   .hero-meta { font-size: var(--t-2xs); }
-  .scroll-cue { margin-top: 1.8rem; }
-  .scroll-cue i { height: 2.2rem; }
+  .scroll-cue { margin-top: var(--s-7); }
+  .scroll-cue i { height: 2.6rem; }
   .case-points li, .rail ul li { font-size: var(--t-xs); }
   .case-head { grid-template-columns: auto 1fr; }
   .case-year { grid-column: 2; justify-self: end; }

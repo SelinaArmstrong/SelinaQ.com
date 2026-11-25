@@ -21,12 +21,6 @@ const bar = document.querySelector(".progress i");
 const rail = document.querySelector(".rail");
 const heroCopy = document.querySelector(".hero-copy");
 const cue = document.querySelector(".scroll-cue");
-const parallax = [...document.querySelectorAll("[data-parallax]")].map((el) => ({
-  el,
-  rate: parseFloat(el.dataset.parallax) || 0.1,
-  top: 0,
-  height: 0,
-}));
 
 let viewportH = window.innerHeight;
 let maxScroll = 1;
@@ -41,11 +35,6 @@ function measure() {
     const r = rail.getBoundingClientRect();
     railTop = r.top + window.scrollY;
     railHeight = Math.max(r.height, 1);
-  }
-  for (const item of parallax) {
-    const r = item.el.getBoundingClientRect();
-    item.top = r.top + window.scrollY;
-    item.height = r.height;
   }
 }
 
@@ -75,12 +64,6 @@ function onScroll() {
     heroCopy.style.transform = `translate3d(0, ${drift.toFixed(1)}px, 0)`;
   }
 
-  for (const item of parallax) {
-    const top = item.top - y;
-    if (top + item.height < -200 || top > viewportH + 200) continue;
-    const offset = (top + item.height / 2 - viewportH / 2) * item.rate;
-    item.el.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0) scale(1.06)`;
-  }
 }
 
 function requestTick() {

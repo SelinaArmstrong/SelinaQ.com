@@ -348,6 +348,11 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 /* ─────────────────────────────  HERO  ─────────────────────────────── */
 .hero { position: relative; isolation: isolate; padding-top: clamp(3.4rem, 8vw, 7rem); }
+/* with no band below it, the hero plane has to reach the metrics itself */
+.hero::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, rgb(var(--bg-rgb) / 0), var(--line) 22%, var(--line) 78%, rgb(var(--bg-rgb) / 0));
+}
 /* Its own plane: a wash that is lit from above and behind the name, so
    the first screen has depth instead of one flat tone. */
 .hero::before {
@@ -421,7 +426,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
    it has been obeyed is clutter. */
 .scroll-cue {
   position: relative; z-index: 2; display: grid; justify-items: center;
-  margin: clamp(2rem, 4vw, 3.2rem) 0 clamp(1.4rem, 2.5vw, 2rem);
+  margin: clamp(2.4rem, 5vw, 4rem) 0 clamp(2.6rem, 5vw, 4.4rem);
   transition: opacity .4s linear;
 }
 .scroll-cue i {
@@ -435,102 +440,6 @@ a, button { -webkit-tap-highlight-color: transparent; }
   animation: cue 3.2s var(--e2) infinite;
 }
 @keyframes cue { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(100%); } }
-/* ── the band ──  a measure. Even spacing, a major mark every ninth
-   division, the whole scale breathing in one slow travelling swell.
-   Order first: nothing here is placed by hand or by chance. */
-.hero-band { position: relative; overflow: hidden; height: clamp(12rem, 30vw, 25rem); }
-.band-art { position: absolute; inset: 0; width: 100%; height: 100%; }
-.tk-axis { stroke: var(--line-2); stroke-width: 1.1; opacity: .75; }
-.tk {
-  stroke: var(--ac); stroke-width: 2; stroke-linecap: round; opacity: .4;
-  transform-origin: center 180px;
-  animation: measure 5.6s ease-in-out infinite alternate;
-}
-.tk-major { stroke: var(--hl); stroke-width: 2.4; opacity: .78; }
-@keyframes measure { from { transform: scaleY(1); } to { transform: scaleY(7.4); } }
-.t0{animation-delay:0.000s}
-.t1{animation-delay:0.042s}
-.t2{animation-delay:0.084s}
-.t3{animation-delay:0.126s}
-.t4{animation-delay:0.168s}
-.t5{animation-delay:0.210s}
-.t6{animation-delay:0.252s}
-.t7{animation-delay:0.294s}
-.t8{animation-delay:0.336s}
-.t9{animation-delay:0.378s}
-.t10{animation-delay:0.420s}
-.t11{animation-delay:0.462s}
-.t12{animation-delay:0.504s}
-.t13{animation-delay:0.546s}
-.t14{animation-delay:0.588s}
-.t15{animation-delay:0.630s}
-.t16{animation-delay:0.672s}
-.t17{animation-delay:0.714s}
-.t18{animation-delay:0.756s}
-.t19{animation-delay:0.798s}
-.t20{animation-delay:0.840s}
-.t21{animation-delay:0.882s}
-.t22{animation-delay:0.924s}
-.t23{animation-delay:0.966s}
-.t24{animation-delay:1.008s}
-.t25{animation-delay:1.050s}
-.t26{animation-delay:1.092s}
-.t27{animation-delay:1.134s}
-.t28{animation-delay:1.176s}
-.t29{animation-delay:1.218s}
-.t30{animation-delay:1.260s}
-.t31{animation-delay:1.302s}
-.t32{animation-delay:1.344s}
-.t33{animation-delay:1.386s}
-.t34{animation-delay:1.428s}
-.t35{animation-delay:1.470s}
-.t36{animation-delay:1.512s}
-.t37{animation-delay:1.554s}
-.t38{animation-delay:1.596s}
-.t39{animation-delay:1.638s}
-.t40{animation-delay:1.680s}
-.t41{animation-delay:1.722s}
-.t42{animation-delay:1.764s}
-.t43{animation-delay:1.806s}
-.t44{animation-delay:1.848s}
-.t45{animation-delay:1.890s}
-.t46{animation-delay:1.932s}
-.t47{animation-delay:1.974s}
-.t48{animation-delay:2.016s}
-.t49{animation-delay:2.058s}
-.t50{animation-delay:2.100s}
-.t51{animation-delay:2.142s}
-.t52{animation-delay:2.184s}
-.t53{animation-delay:2.226s}
-.t54{animation-delay:2.268s}
-.t55{animation-delay:2.310s}
-.t56{animation-delay:2.352s}
-.t57{animation-delay:2.394s}
-.t58{animation-delay:2.436s}
-.t59{animation-delay:2.478s}
-.t60{animation-delay:2.520s}
-.t61{animation-delay:2.562s}
-.t62{animation-delay:2.604s}
-.t63{animation-delay:2.646s}
-.t64{animation-delay:2.688s}
-.t65{animation-delay:2.730s}
-.t66{animation-delay:2.772s}
-.t67{animation-delay:2.814s}
-.t68{animation-delay:2.856s}
-.t69{animation-delay:2.898s}
-.t70{animation-delay:2.940s}
-.t71{animation-delay:2.982s}
-.t72{animation-delay:3.024s}
-
-.hero-band::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background:
-    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0) 7%,
-                    rgb(var(--bg-rgb) / 0) 93%, var(--bg) 100%),
-    linear-gradient(180deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0) 15%,
-                    rgb(var(--bg-rgb) / 0) 85%, var(--bg) 100%);
-}
-
 /* ─────────────────────────────  METRICS  ──────────────────────────── */
 .metrics { position: relative; padding-block: var(--sec-y-sm) var(--gap-row); }
 .metrics-grid {
@@ -884,15 +793,6 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
       from { transform: scale(1.09) translate3d(0, -1.6%, 0); }
       to   { transform: scale(1.09) translate3d(0,  1.6%, 0); }
     }
-    .hero-band {
-      animation: aperture linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 38%;
-    }
-    @keyframes aperture {
-      from { clip-path: inset(0 11% round var(--r)); }
-      to   { clip-path: inset(0 0 round 0); }
-    }
     .thesis p {
       animation: thesis-rule linear both;
       animation-timeline: view();
@@ -1022,8 +922,7 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .js .reveal .p-gate, .js .reveal .p-labels, .js .reveal .p-keys, .js .reveal .p-doc {
     opacity: 1 !important; transform: none !important;
   }
-  .js .hero-band-inner, .js .reveal .case-media { clip-path: none; }
-  .tk { transform: scaleY(3.4); }
+  .js .reveal .case-media { clip-path: none; }
   .js .reveal .p-rail path { stroke-dashoffset: 0 !important; }
   .js .reveal .eyebrow i, .js .eyebrow.reveal i { transform: none; }
   .hero-copy { opacity: 1 !important; }
@@ -1047,7 +946,7 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
     --line: #c8c8c8; --line-2: #c8c8c8;
   }
   body { background: #fff; background-attachment: scroll; color: #000; font-size: 10.5pt; line-height: 1.45; }
-  .grain, .progress, .aura, .scroll-cue, .hero-band,
+  .grain, .progress, .aura, .scroll-cue,
   .hero::before, .case-shot,
   .site-header, .skip-link, .actions, .status-pill, .nav-cta,
   .case-media, footer .up { display: none !important; }

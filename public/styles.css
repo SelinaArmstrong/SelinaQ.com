@@ -26,6 +26,8 @@
   --edge:      transparent;                                  /* dark theme only */
   --lift:      0 1px 2px rgb(13 25 45 / .05),
                0 14px 30px -20px rgb(13 25 45 / .28);        /* planes cast, not glow */
+  --lift-hi:   0 2px 4px rgb(13 25 45 / .06),
+               0 26px 52px -24px rgb(13 25 45 / .38);        /* the same plane, raised */
 
   /* ── type ── */
   --text:      #0F1419;
@@ -164,6 +166,7 @@
   --line-2:    #333B46;
   --edge:      rgb(255 255 255 / .045);
   --lift:      0 0 transparent;
+  --lift-hi:   0 0 transparent;
 
   --text:      #EDEFF2;
   --text-2:    #A7ADB6;
@@ -508,7 +511,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   position: relative; overflow: hidden; border-radius: var(--r);
   border: 1px solid var(--line); background: var(--bg-2);
   box-shadow: inset 0 1px 0 var(--edge), var(--lift);
-  transition: border-color .6s var(--e), transform .6s var(--e);
+  transition: border-color .6s var(--e), transform .6s var(--e), box-shadow .6s var(--e);
   transform: perspective(1200px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg));
 }
 .case-media { aspect-ratio: 16 / 10; }
@@ -533,12 +536,15 @@ a, button { -webkit-tap-highlight-color: transparent; }
   margin-left: var(--s-3); color: var(--text-3);
   font-size: var(--t-micro); letter-spacing: var(--tr-body);
 }
-.shot-view { position: relative; flex: 1; overflow: hidden; }
-.shot-view img {
-  width: 100%; height: auto; display: block;
-  transition: transform 1.2s var(--e);
+.shot-view { position: relative; flex: 1; }
+/* No crop, no zoom, no scale: the frame takes whatever height the image
+   needs and every edge of it stays inside. Hover lifts the whole plane
+   instead, which reads as a window you can open rather than one that
+   swallows its own content. */
+.shot-view img { width: 100%; height: auto; display: block; }
+.case-shot:hover .case-media, .case-shot:focus-visible .case-media {
+  box-shadow: inset 0 1px 0 var(--edge), var(--lift-hi);
 }
-.shot:hover .shot-view img { transform: scale(1.02); }
 
 .case-shot { display: block; border-radius: var(--r); }
 .case-chip {
@@ -611,6 +617,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   --line-2:    var(--nv-line-2);
   --edge:      rgb(255 255 255 / .07);
   --lift:      0 0 transparent;
+  --lift-hi:   0 0 transparent;
   --text:      var(--nv-text);
   --text-2:    var(--nv-text-2);
   --text-3:    var(--nv-text-3);
@@ -698,12 +705,25 @@ a, button { -webkit-tap-highlight-color: transparent; }
   background: var(--contact-bg);
   box-shadow: inset 0 1px 0 var(--edge);
 }
-.contact-inner { position: relative; z-index: 2; }
+/* Centred, to answer the hero. Everything between the two runs on one
+   left spine because it is a document being read; these two are not.
+   The hero is the title page and this is the closing page, and a block
+   whose whole job is a single address is stronger on the centre line
+   than hanging off a margin. */
+.contact-inner { position: relative; z-index: 2; text-align: center; }
+.contact .eyebrow { justify-content: center; }
+/* the eyebrow rule mirrored, so a centred label is symmetrical */
+.contact .eyebrow::after {
+  content: ""; width: 1.6rem; height: 1px; background: var(--hl-dk);
+  transform-origin: 100% 50%; transition: transform .8s var(--e) .1s;
+}
+.js .contact .eyebrow.reveal::after { transform: scaleX(0); }
+.js .contact .eyebrow.reveal.in::after { transform: scaleX(1); }
 .contact h2 { margin-top: var(--s-6); font-size: var(--t-1); line-height: var(--lh-display); letter-spacing: var(--tr-display); font-weight: var(--w-medium); }
 /* one blue focus per block: the address, not the heading above it */
 .contact h2 em { font-style: normal; color: var(--display-2); }
-.contact-sub { max-width: var(--measure-sm); margin-top: var(--s-6); color: var(--text-2); line-height: var(--lh-relaxed); text-wrap: balance; }
-.contact-links { display: grid; justify-items: start; gap: var(--s-6); margin-top: var(--gap-row); }
+.contact-sub { max-width: var(--measure-sm); margin: var(--s-6) auto 0; color: var(--text-2); line-height: var(--lh-relaxed); text-wrap: balance; }
+.contact-links { display: grid; justify-items: center; gap: var(--s-6); margin-top: var(--gap-row); }
 .mailto {
   position: relative; display: inline-flex; align-items: center; gap: var(--s-4);
   font-size: var(--t-3); font-weight: var(--w-medium); letter-spacing: var(--tr-4);
@@ -717,10 +737,10 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .mailto:hover { color: var(--hl-lt); }
 .mailto:hover .icon { transform: translateX(4px); }
-.profiles { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-7); }
+.profiles { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--s-3) var(--s-7); }
 .c-link .icon { color: var(--ac-dk); transition: color .35s; }
 .c-link:hover .icon { color: var(--hl); }
-.contact-note { max-width: var(--measure); margin-top: var(--gap-row); color: var(--text-3); font-size: var(--t-xs); line-height: var(--lh-body); }
+.contact-note { max-width: var(--measure-sm); margin: var(--gap-row) auto 0; color: var(--text-3); font-size: var(--t-xs); line-height: var(--lh-body); text-wrap: balance; }
 .contact-note.tight { margin-top: var(--s-2); }
 
 /* ─────────────────────────────  DOCUMENT PAGES  ───────────────────
@@ -772,20 +792,16 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
 
 /* ───────────────────────  SCROLL-DRIVEN MOTION  ────────────────────
    Where the browser can tie an animation to the scroll position itself,
-   two images drift inside their frames as they pass. It runs on the
-   compositor, costs the main thread nothing, and simply does not apply
-   where it is unsupported — there is no JS fallback by design. */
+   an element responds to the scroll position as it passes. It runs on
+   the compositor, costs the main thread nothing, and simply does not
+   apply where it is unsupported — there is no JS fallback by design.
+
+   A parallax drift inside the frame is deliberately NOT one of these.
+   It scaled the screenshots up and let the frame clip the overflow,
+   which shaved the navigation off one edge and the buttons off the
+   other. A screenshot is evidence; it is shown whole. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .case-media img {
-      animation: shot-drift linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 100%;
-    }
-    @keyframes shot-drift {
-      from { transform: scale(1.09) translate3d(0, -1.6%, 0); }
-      to   { transform: scale(1.09) translate3d(0,  1.6%, 0); }
-    }
     .thesis .shell {
       animation: thesis-rule linear both;
       animation-timeline: view();
@@ -915,7 +931,8 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   }
   .js .reveal .case-media { clip-path: none; }
   .js .reveal .p-rail path { stroke-dashoffset: 0 !important; }
-  .js .reveal .eyebrow i, .js .eyebrow.reveal i { transform: none; }
+  .js .reveal .eyebrow i, .js .eyebrow.reveal i,
+  .js .contact .eyebrow.reveal::after { transform: none; }
   .hero-copy { opacity: 1 !important; }
   .js .rail::before { --rail: 1; }
   .js.is-ready .display::after { display: none; }
@@ -931,7 +948,7 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
     --text: #000; --text-2: #1f1f1f; --text-3: #3a3a3a;
     --ac: #333; --ac-dk: #8d8d8d;
     --hl: #1a1a1a; --hl-lt: #1a1a1a; --hl-hi: #1a1a1a; --hl-dk: #8d8d8d;
-    --hl-dim: #c8c8c8; --hl-on: #fff; --edge: transparent; --lift: none;
+    --hl-dim: #c8c8c8; --hl-on: #fff; --edge: transparent; --lift: none; --lift-hi: none;
     --grain-op: 0; --aura-1: transparent; --aura-2: transparent;
     --ac-dim: #c8c8c8; --text-hi: #000; --display-2: #000;
     --line: #c8c8c8; --line-2: #c8c8c8;
@@ -959,7 +976,13 @@ footer { border-top: 1px solid var(--line); background: var(--bg-1); box-shadow:
   .section { padding-block: 1.2rem; }
   .sec-head h2, .exp-head h2, .contact h2 { font-size: 16pt; margin-top: .4rem; }
   .contact { padding-block: var(--s-5); }
-  .contact-links { justify-content: flex-start; }
+  /* the centre line is a screen gesture; on paper everything is left */
+  .contact-inner { text-align: left; }
+  .contact .eyebrow { justify-content: flex-start; }
+  .contact .eyebrow::after { display: none; }
+  .contact-sub, .contact-note { margin-inline: 0; }
+  .contact-links { justify-content: flex-start; justify-items: start; }
+  .profiles { justify-content: flex-start; }
   .exp-grid, .cap-grid, .credentials, .case-grid { display: block; }
   .cap, .case + .case { border: 0; padding: 0; margin-top: .9rem; }
   .metrics-grid { display: flex; gap: 1.2rem; }

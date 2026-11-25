@@ -6,7 +6,8 @@ committed. What is left is getting the commits off this machine and the
 current build onto the live site.
 
 Repo: `SelinaQ.com`, branch `main`, clean working
-tree, **ten commits ahead of where anything has actually been published**.
+tree, **thirteen commits ahead of where anything has actually been
+published**.
 
 ---
 
@@ -41,7 +42,7 @@ python3 -m http.server 8781 --directory public
 
 ## Task 1 — publish the current build
 
-The live site is **behind this checkout by ten commits**. Everything in them
+The live site is **behind this checkout by thirteen commits**. Everything in them
 is design work that has been reviewed and verified locally; none of it is on
 the web.
 
@@ -121,6 +122,21 @@ If you need a new scroll effect, cache its geometry the same way.
 Related: the page's ambient gradient is its own fixed layer (`.field`), not
 `background-attachment: fixed` on `body`, which repainted the whole page per
 frame. The grain overlay carries no `mix-blend-mode` for the same reason.
+
+**The project screenshots are never cropped.** `.case-media.shot` takes
+whatever height its image needs (`aspect-ratio: auto`, `height: auto`) and
+nothing scales the image inside its frame. Two earlier versions did — a
+fixed 16:10 frame with `object-fit: cover`, then a scroll-driven parallax at
+`scale(1.09)` — and both shaved the navigation off one edge of the dashboard
+and the buttons off the other. The screenshots are evidence that the products
+exist; they are shown whole. Hover lifts the plane (`--lift-hi`) instead of
+zooming the image.
+
+**Alignment is a bookend.** The hero and the contact section are centred;
+everything between them runs on one left spine. The hero is the title page
+and the contact is the closing page — neither is a block of document being
+read. `@media print` returns the contact block to the left, because the
+centre line is a screen gesture.
 
 **Reveals.** An IntersectionObserver reveals elements, and a sweep runs 120ms
 after scrolling settles to catch anything that flew past between frames. Both

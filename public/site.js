@@ -244,7 +244,7 @@ if (fine.matches && !calm.matches) {
     });
   });
 
-  document.querySelectorAll(".cap, .hero-band").forEach((el) => {
+  document.querySelectorAll(".cap").forEach((el) => {
     el.addEventListener("pointermove", (event) => {
       const r = el.getBoundingClientRect();
       el.style.setProperty("--px", `${event.clientX - r.left}px`);

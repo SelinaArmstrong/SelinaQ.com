@@ -59,8 +59,6 @@
   --grain-op:  .035;
 
   /* images adapt to the theme rather than being baked for one of them */
-  --band-filter: grayscale(1) brightness(1.34) contrast(.92);
-  --band-wash:   rgb(var(--hl-rgb) / .22);
   --contact-bg:  linear-gradient(180deg, #DCE8FA, rgb(var(--bg-rgb) / 0) 78%);
 
   /* ── the inverted plane ──  one navy band, its palette kept here so it
@@ -182,8 +180,6 @@
   --aura-2:    #6E7BC92e;
   --grain-op:  .035;
 
-  --band-filter: grayscale(1) contrast(1.22) brightness(.8);
-  --band-wash:   rgb(var(--hl-rgb) / .1);
   --contact-bg:  linear-gradient(180deg, var(--bg-1), rgb(var(--bg-rgb) / 0) 72%);
 }
 
@@ -439,31 +435,32 @@ a, button { -webkit-tap-highlight-color: transparent; }
   animation: cue 3.2s var(--e2) infinite;
 }
 @keyframes cue { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(100%); } }
-.hero-band { position: relative; overflow: hidden; height: clamp(12rem, 30vw, 25rem); }
-/* brushed metal should catch the light; the band answers the pointer */
-.hero-band::before {
-  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0;
-  background: radial-gradient(26rem 26rem at var(--px, 50%) var(--py, 50%),
-              rgb(255 255 255 / .55), transparent 62%);
-  transition: opacity .6s var(--e);
+/* ── the band ──  agreements moving along four lanes toward an approval
+   gate. Left of the gate they are drafts; right of it they are executed
+   and carry a tick. Both states are one drawing, clipped either side of
+   the gate, so a document changes at the instant it crosses. Vector, so
+   it is crisp at any size and weighs nothing. */
+.hero-band {
+  position: relative; overflow: hidden; height: clamp(12rem, 30vw, 25rem);
 }
-.hero-band:hover::before { opacity: 1; }
-.hero-band-inner { position: absolute; inset: -12% 0; }
-.hero-band img {
-  width: 100%; height: 100%; object-fit: cover; object-position: 50% 48%;
-  will-change: transform;
-  filter: var(--band-filter);
-  transform: scale(1.06);
-}
-.js .hero-band-inner { clip-path: inset(0 0 100% 0); }
-.js.is-ready .hero-band-inner { clip-path: inset(0 0 0 0); transition: clip-path 1.4s var(--e) .55s; }
+.band-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* start mid-cycle, so the gate already has signed work past it */
+.b-flow { animation: bandflow 58s linear infinite; animation-delay: -31s; }
+@keyframes bandflow { from { transform: translateX(-880px); } to { transform: translateX(0); } }
+.d-rule { stroke: var(--ac); stroke-width: 1.5; stroke-linecap: round; opacity: .34; }
+.b-signed .d-rule { stroke: var(--hl); opacity: .62; }
+.d-tick { fill: none; stroke: var(--hl); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+.b-draft .d-tick { display: none; }
+.b-gate { stroke: var(--hl-dk); stroke-width: 1.2; opacity: .55; }
+.b-gate-cap { stroke: var(--hl); stroke-width: 1.6; opacity: .7; }
+.b-gate-dot { fill: var(--hl); }
 .hero-band::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background:
-    linear-gradient(90deg, var(--bg) 1%, transparent 26%, transparent 74%, var(--bg) 99%),
-    linear-gradient(180deg, var(--bg), rgb(var(--bg-rgb) / .3) 42%, var(--bg)),
-    linear-gradient(0deg, var(--band-wash), var(--band-wash));
-  mix-blend-mode: normal;
+    linear-gradient(90deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0) 11%,
+                    rgb(var(--bg-rgb) / 0) 89%, var(--bg) 100%),
+    linear-gradient(180deg, var(--bg) 0%, rgb(var(--bg-rgb) / 0) 22%,
+                    rgb(var(--bg-rgb) / 0) 78%, var(--bg) 100%);
 }
 
 /* ─────────────────────────────  METRICS  ──────────────────────────── */

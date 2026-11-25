@@ -56,7 +56,7 @@ function onScroll() {
   const y = window.scrollY;
 
   if (bar) bar.style.setProperty("--p", (y / maxScroll).toFixed(4));
-  header.classList.toggle("is-stuck", y > 24);
+  if (!root.classList.contains("nav-open")) header.classList.toggle("is-stuck", y > 24);
   if (calm.matches) return;
 
   /* the timeline is drawn at the pace you read it */
@@ -65,10 +65,10 @@ function onScroll() {
       "--rail", clamp01((y + viewportH * 0.62 - railTop) / railHeight).toFixed(3));
   }
 
-  /* the hero recedes on its way out instead of just sliding off */
+  /* the hero leaves at its own pace — it drifts, it does not dissolve */
   if (heroCopy) {
-    heroCopy.style.setProperty(
-      "--hero-fade", (1 - clamp01((y - viewportH * 0.1) / (viewportH * 0.55)) * 0.85).toFixed(3));
+    const drift = clamp01(y / (viewportH * 0.9)) * -64;
+    heroCopy.style.transform = `translate3d(0, ${drift.toFixed(1)}px, 0)`;
   }
 
   for (const item of parallax) {
@@ -240,7 +240,7 @@ if (fine.matches && !calm.matches) {
     });
   });
 
-  document.querySelectorAll(".cap").forEach((el) => {
+  document.querySelectorAll(".cap, .hero-band").forEach((el) => {
     el.addEventListener("pointermove", (event) => {
       const r = el.getBoundingClientRect();
       el.style.setProperty("--px", `${event.clientX - r.left}px`);
@@ -274,10 +274,24 @@ if (menuButton && sheet) {
 
   const label = menuButton.querySelector(".menu-label");
 
+  let lockedY = 0;
+
   const setOpen = (open) => {
     menuButton.setAttribute("aria-expanded", String(open));
-    root.classList.toggle("nav-open", open);
     if (label) label.textContent = open ? "Close" : "Menu";
+
+    /* Hold the page exactly where it was. Clipping it with overflow:hidden
+       lets the browser clamp the scroll position, and the few pixels it
+       moves are visible as a jolt behind the sheet. */
+    if (open) {
+      lockedY = window.scrollY;
+      root.classList.add("nav-open");
+      document.body.style.top = `-${lockedY}px`;
+    } else {
+      root.classList.remove("nav-open");
+      document.body.style.top = "";
+      window.scrollTo(0, lockedY);
+    }
     /* Focus stays on the toggle, which is the first stop in the trap below:
        moving it into the sheet while the sheet is still visibility:hidden is
        a silent no-op, and jumping the caret is jarring either way. */

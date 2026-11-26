@@ -160,6 +160,27 @@ been in its history — it is the owner's file, kept off the public record by
 it is the one the page links. Ask the owner for the current master before
 treating any local copy as authoritative.
 
+**Caching is split three ways, and one dashboard switch can undo all of
+it.** `public/_headers` gives the font a year, the regenerated images a
+week, the stylesheet and script an hour, and leaves every HTML page on the
+Workers default so content changes are live on deploy. None of it applies
+unless Cloudflare's **Browser Cache TTL stays on "Respect Existing
+Headers"** — it was set to 4 hours once, which silently overrode
+everything. If caching looks wrong, check that switch before the file.
+
+The images get a week rather than a year on purpose: `capture-shots.sh`
+and `og-card.html` both overwrite in place, so a year-long `immutable`
+would strand returning visitors on a stale screenshot. The font is the
+only asset that may carry `immutable`, because a different subset would
+be a different file.
+
+`X-Content-Type-Options` is not in `_headers`. The zone already sends it
+via the HSTS no-sniff option; adding it here would emit it twice. There is
+deliberately no Content-Security-Policy: the page carries inline analytics
+and inline JSON-LD, and static assets cannot issue a per-response nonce, so
+a policy here would need `unsafe-inline` and would assert more than it
+enforces.
+
 **Accessibility.** Mobile nav is a sheet with a focus trap, scroll lock,
 Escape to close, and `aria-expanded` kept in sync. The toggle's visible word
 turns over in CSS with both words in the box, so it is decorative and

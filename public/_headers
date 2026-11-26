@@ -1,0 +1,57 @@
+# Response headers for the Workers assets in this directory.
+#
+# Workers Assets serves everything as `public, max-age=0, must-revalidate`
+# unless told otherwise, which makes a browser re-check the font, both
+# screenshots and the favicons on every single page view. The edge answers
+# those quickly, but they are still round trips for files that do not
+# change. The rules below give each kind of file the lifetime it has
+# actually earned.
+#
+# Cloudflare's Browser Cache TTL must stay on "Respect Existing Headers"
+# in the dashboard, or it overrides all of this. It was set to 4 hours
+# once; if caching starts behaving oddly, check there first.
+#
+# `X-Content-Type-Options: nosniff` is deliberately absent: the zone
+# already sends it through the HSTS no-sniff option, and setting it here
+# too would emit the header twice.
+
+/*
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=()
+  X-Frame-Options: DENY
+
+# Screenshots, favicons and the Open Graph card are regenerated in place,
+# under the same filenames — `design/capture-shots.sh` and
+# `design/og-card.html` both overwrite rather than version. A year would
+# strand a returning visitor on a stale image, so these get a week: long
+# enough to stop the per-visit revalidation, short enough that a new
+# capture reaches everyone within days.
+/assets/*
+  Cache-Control: public, max-age=604800
+
+# The font is the one asset that genuinely never changes in place. It is a
+# fixed subset of one weight axis; a different subset would be a different
+# file. Declared after /assets/* so it wins whichever way the matcher
+# resolves precedence.
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Stylesheet and script carry no content hash in their names, so a long
+# life here is a long wait for a fix to land. An hour keeps repeat views
+# cheap while still getting a correction out the same morning.
+/styles.css
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/site.js
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# The resume is replaced under this same filename whenever the owner
+# exports a new one, and it is the one file a reader may come back for
+# specifically. Freshness beats bytes: revalidate hourly, and the ETag
+# makes the check a 304 rather than a download.
+/Selina-Armstrong-Resume.pdf
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Not listed, and deliberately: every HTML page keeps the Workers default
+# of max-age=0 + must-revalidate, so a content change is live the moment
+# it deploys.

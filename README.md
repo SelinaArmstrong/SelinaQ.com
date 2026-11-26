@@ -18,6 +18,8 @@ public/          ← the deploy root. Everything that ships lives here.
   sitemap.xml
   Selina-Armstrong-Resume.pdf
   assets/        ← screenshots, the Geist woff2 subset, the favicons, OG card
+  _headers       ← cache lifetimes and security headers. Served by Workers,
+                   never served AS a file.
 design/          ← visual-direction studies, the Open Graph card template
                    and capture-shots.sh. NOT deployed.
 .claude/         ← local preview config for Claude Code. NOT deployed.

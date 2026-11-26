@@ -82,7 +82,7 @@ Two sets of terms, because this repository is not only code. See
 
 - **Code** — the markup, `styles.css`, `site.js`, the Wrangler config and the
   `design/` scripts are MIT. Take them, learn from them, ship them.
-- **Content** — the written copy, the photograph, the two product
+- **Content** — the written copy, the Open Graph card, the two product
   screenshots, the favicons and the published resume PDF are all rights
   reserved. The name "Selina Armstrong" and
   the wordmark built from it are not licensed either.

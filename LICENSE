@@ -1,0 +1,72 @@
+Copyright (c) 2026 Selina Armstrong. All rights reserved.
+
+This repository holds two different kinds of material and they are NOT
+licensed on the same terms. Read both sections before reusing anything.
+
+
+========================================================================
+1. CODE  —  MIT License
+========================================================================
+
+Covers the markup, styling, scripts and configuration that make the site
+work — the structure, not the words inside it:
+
+    public/index.html, public/404.html, public/privacy/index.html
+        (markup and structure only; the copy inside them is content)
+    public/styles.css
+    public/site.js
+    public/robots.txt, public/sitemap.xml
+    wrangler.jsonc
+    design/capture-shots.sh, design/directions.html, design/og-card.html
+    .claude/, .gitignore
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+========================================================================
+2. CONTENT  —  All rights reserved
+========================================================================
+
+The following is NOT covered by the MIT grant above. No licence is given
+to copy, redistribute, modify or republish any of it:
+
+    the written copy on every page, including the project write-ups,
+        the experience entries and the privacy policy
+    public/assets/selina-armstrong.jpg            (photograph)
+    public/assets/contractledger-dashboard.webp   (product screenshot)
+    public/assets/asylumcompass-home.webp         (product screenshot)
+    public/assets/favicon-32.png, favicon-64.png, apple-touch-icon.png
+    public/Selina-Armstrong-Resume.pdf
+    the name "Selina Armstrong" and any wordmark built from it
+
+You are welcome to read this repository, study how the site is built and
+reuse the code under section 1. You may not present this person's work,
+likeness, employment history or résumé as your own, and you may not
+deploy a copy of this site with its content left in place.
+
+
+========================================================================
+3. THIRD-PARTY
+========================================================================
+
+The Geist typeface in public/assets/fonts/ is covered by neither section
+above. It is licensed under the SIL Open Font License 1.1. That licence
+travels with the font in public/assets/fonts/geist-license.txt and must
+stay with any copy of it.

@@ -14,6 +14,17 @@
 .claude/settings.local.json
 .wrangler/
 node_modules/
+.env
+.env.*
+.dev.vars
+.dev.vars.*
+!.env.example
+!.dev.vars.example
 
 # palette comparison renders (regenerate from design/ when needed)
 design/palettes/
+
+# the editable resume master. It stays on the owner's disk and is not
+# published with this repository; the approved export ships as
+# public/Selina-Armstrong-Resume.pdf.
+content/

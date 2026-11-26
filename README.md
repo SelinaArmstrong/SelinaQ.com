@@ -1,6 +1,6 @@
 # selinaq.com
 
-<https://github.com/SelinaArmstrong/SelinaQ.com>
+<https://selinaq.com/>
 
 Personal site for Selina Armstrong — Senior Contract Specialist.
 Static, hand-built: no framework, no build step, no dependencies.
@@ -18,8 +18,6 @@ public/          ← the deploy root. Everything that ships lives here.
   sitemap.xml
   Selina-Armstrong-Resume.pdf
   assets/        ← screenshots, the Geist woff2 subset, the favicons, OG card
-content/         ← the master resume (.docx). Source of truth for every
-                   claim on the page. NOT deployed.
 design/          ← visual-direction studies, the Open Graph card template
                    and capture-shots.sh. NOT deployed.
 .claude/         ← local preview config for Claude Code. NOT deployed.
@@ -28,16 +26,19 @@ design/          ← visual-direction studies, the Open Graph card template
 ## Local preview
 
 ```
-python3 -m http.server 8781 --directory public
+python3 -m http.server 8781 --bind 127.0.0.1 --directory public
 ```
 
 Then open <http://localhost:8781/>.
 
 ## Deploying
 
-Cloudflare Workers Builds deploys the `selinaq-com` Worker on pushes to `main`
-from the private GitHub repository. The build command is empty and the deploy
-command is `npx wrangler deploy`.
+`npx wrangler deploy --dry-run` checks the Worker configuration locally.
+Use `npx wrangler dev --local` to test routing and the custom 404.
+For an authorized release, `npx wrangler deploy` publishes the site.
+If using Workers Builds, leave the build command empty and use the same
+deploy command. Check the connected repository and branch in Cloudflare
+before relying on a push to trigger a release.
 
 `wrangler.jsonc` publishes only `public/` and serves `404.html` with HTTP 404.
 The production hostname is `https://selinaq.com/`. The Cloudflare dashboard
@@ -45,8 +46,8 @@ manages the custom domain and redirects `www.selinaq.com` to the apex.
 
 ## Analytics
 
-`public/index.html` loads the Google tag asynchronously at the end of `<head>`.
-The GA4 stream runs on `selinaq.com` and uses first-party analytics cookies.
+The homepage loads the Google tag asynchronously on the production hostname
+`selinaq.com`. The GA4 stream uses first-party analytics cookies.
 The footer links to the privacy policy at `/privacy/`.
 
 ## Things to keep in sync by hand
@@ -61,17 +62,33 @@ The footer links to the privacy policy at `/privacy/`.
 - `assets/favicon-32.png`, `favicon-64.png`, `apple-touch-icon.png` — the mark
   is the Geist "S", white on azure, full bleed. Each size is rendered natively
   rather than downscaled from one master, so the small ones stay crisp.
-- `Selina-Armstrong-Resume.pdf` — exported from
-  `content/Selina-Armstrong-Resume-master.docx`, which is the baseline for the
-  wording on the page. When the master changes, re-check the hero line, the
-  metrics, Capabilities, the timeline bullets and the project tags against it.
+- `Selina-Armstrong-Resume.pdf` — the approved export. Its editable master is
+  deliberately not in this repository (see `.gitignore`); it lives on the
+  owner's disk. Check the hero, metrics, capabilities, timeline and project
+  tags against each new export.
 
 ## Accessibility and motion
 
-- Every animation is `transform`/`opacity` only and is switched off under
-  `prefers-reduced-motion: reduce`.
-- Body copy meets WCAG 2.1 AA contrast on the dark palette; `--text-3`
-  (`#80858E`) is the lightest colour used for real text — do not go dimmer.
+- The page respects `prefers-reduced-motion: reduce`. Check text contrast
+  against both the default light surfaces and the dark experience section.
 - The page is fully readable with JavaScript disabled.
 - `@media print` gives the dark theme a light print palette; check it after
   layout changes.
+
+## Licence
+
+Two sets of terms, because this repository is not only code. See
+[LICENSE](LICENSE) for the authoritative wording.
+
+- **Code** — the markup, `styles.css`, `site.js`, the Wrangler config and the
+  `design/` scripts are MIT. Take them, learn from them, ship them.
+- **Content** — the written copy, the photograph, the two product
+  screenshots, the favicons and the published resume PDF are all rights
+  reserved. The name "Selina Armstrong" and
+  the wordmark built from it are not licensed either.
+- **Geist** — the typeface in `public/assets/fonts/` is third-party, under
+  the SIL Open Font License 1.1. Its licence sits beside it in
+  `geist-license.txt` and has to stay with any copy of the font.
+
+So: clone it to see how the page is built, reuse the code freely, and
+replace the content with your own before you deploy anything.

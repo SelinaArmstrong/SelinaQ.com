@@ -1,98 +1,21 @@
 # Handoff — selinaq.com
 
-Personal site for Selina Armstrong, a senior contract specialist looking for
-contract operations / procurement / CLM roles. The design is finished and
-committed. What is left is getting the commits off this machine and the
-current build onto the live site.
+The repository contains the production assets for Selina Armstrong's portfolio
+alongside design studies and these maintainer notes.
+See the [README](README.md) for local preview and release commands.
 
-Repo: `SelinaQ.com`, branch `main`, clean working
-tree, **sixteen commits ahead of where anything has actually been
-published**.
+## Release checks
 
----
-
-## What this is
-
-Static site. No framework, no build step, no dependencies, no package.json.
-Four files do the work:
-
-| File | Role |
-| --- | --- |
-| `public/index.html` | the whole page, one document |
-| `public/styles.css` | every style; all colour comes from tokens in `:root` |
-| `public/site.js` | motion and interaction, progressive enhancement |
-| `public/404.html` | not-found page, same design |
-
-Plus `public/privacy/index.html`, and supporting files: `public/robots.txt`,
-`public/sitemap.xml`, `public/Selina-Armstrong-Resume.pdf`, `public/assets/`
-(two product screenshots, the Geist woff2 subset, the Open Graph card and the
-favicons).
-
-**Not deployed, and must not be:** `content/` (the master resume .docx),
-`design/` (visual studies), `.claude/` (local preview config), `README.md`,
-this file.
-
-Local preview:
-
-```
-python3 -m http.server 8781 --directory public
-```
-
----
-
-## Task 1 — publish the current build
-
-The live site is **behind this checkout by sixteen commits**. Everything in them
-is design work that has been reviewed and verified locally; none of it is on
-the web.
-
-Deployment does **not** go through git. `wrangler.jsonc` publishes `./public`
-as a Cloudflare Workers static-assets site:
-
-```jsonc
-{ "name": "selinaq-com", "assets": { "directory": "./public",
-  "not_found_handling": "404-page" } }
-```
-
-So the live update is `npx wrangler deploy` from the repo root, after a
-Cloudflare login. Neither wrangler nor any Cloudflare credential is present
-on this machine — `wrangler --version` fails and there is no
-`~/.config/.wrangler`. Ask the owner to authenticate; do not go looking for
-their tokens.
-
-After deploying, check the live site rather than trusting the command: the
-hero, the two project screenshots, `/privacy/`, and a URL that does not exist
-(it must serve `404.html`, which is what `not_found_handling` is for).
-
-## Task 2 — the GitHub remote
-
-`origin` is set to <https://github.com/SelinaArmstrong/SelinaQ.com.git> but
-**that repository does not exist** — `git push` returns "Repository not
-found", and `gh repo view` cannot resolve it. The local `origin/main` ref is
-stale; nothing was ever pushed. The `gh` CLI here is authenticated as
-**another GitHub account**, which is not the `SelinaArmstrong` account the remote names,
-and has no related repository among its sixteen.
-
-Two decisions belong to the owner, not to you:
-
-- which account owns the repository, and whether it is public or private;
-- whether `content/Selina-Armstrong-Resume-master.docx` ships with it. Its
-  content is already public as a PDF on the site and the file carries no
-  comments or tracked changes, so this is a choice rather than a leak — but
-  it is the owner's choice.
-
-Ask, then create the repository, fix the remote if the owner is different,
-and push `main`.
-
-## Task 3 — after each change
-
-- `sitemap.xml` `<lastmod>` is maintained by hand. Update it when the page
-  changes meaningfully.
-- If the name, title or palette changes, regenerate the Open Graph card
-  `public/assets/selina-armstrong.jpg` (1200×630). It is rendered from an HTML
-  template, not photographed.
-
----
+- Wrangler serves `public/`. Check the homepage, both project screenshots,
+  the resume download, `/privacy/` and the HTTP status and body of a missing URL.
+- Check the connected repository and branch in Cloudflare before a release
+  through Workers Builds. A local tracking branch can be stale.
+- The published resume PDF carries personal contact details on purpose: the
+  page links it as a download, so it is public by design. The editable master
+  is not in this repository and not in its history. Both were checked before
+  this repository was opened; re-check if either file is replaced.
+- Update `sitemap.xml` when a page changes meaningfully. Render the Open Graph
+  card from `design/og-card.html` if the name, title or palette changes.
 
 ## Invariants — please do not undo these
 
@@ -219,7 +142,7 @@ line. If a segment wraps at the current width the mask would clip it, so that
 heading is restored exactly as authored, and the check reruns on resize. Keep
 the fallback.
 
-**Copy.** `content/Selina-Armstrong-Resume-master.docx` is the baseline for
+**Copy.** The owner's editable resume master is the baseline for
 every claim on the page — the figures, the counterparty names, the capability
 terms. Do not invent or soften anything; if the master changes, re-check the
 hero line, the metrics, Capabilities, the timeline bullets and the project
@@ -227,12 +150,15 @@ tags against it. Accented characters were removed deliberately: the word is
 "resume", not "résumé".
 
 The shipped PDF, `public/Selina-Armstrong-Resume.pdf`, was replaced on
-25 November 2026 from the owner's current export. It differs from
-`content/Selina-Armstrong-Resume-master.docx` by one line — the contact line
-now carries `selinaq.com` — so **the .docx in `content/` is one revision
-behind**. Nothing on the page needed changing: every figure, counterparty and
-date in the new export matches what was already there. Ask the owner for the
-current .docx before treating `content/` as authoritative again.
+25 November 2026 from the owner's current export, whose contact line carries
+`selinaq.com`. Nothing on the page needed changing: every figure, counterparty
+and date in that export matches what was already there.
+
+The editable master is **deliberately not in this repository** and never has
+been in its history — it is the owner's file, kept off the public record by
+`.gitignore`. The shipped PDF is the only resume this repository carries, and
+it is the one the page links. Ask the owner for the current master before
+treating any local copy as authoritative.
 
 **Accessibility.** Mobile nav is a sheet with a focus trap, scroll lock,
 Escape to close, and `aria-expanded` kept in sync. The toggle's visible word

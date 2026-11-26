@@ -12,9 +12,6 @@ const fine = window.matchMedia("(pointer: fine)");
 const mobile = window.matchMedia("(max-width: 760px)");
 const clamp01 = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
 
-/* ── entrance choreography ─────────────────────────────────────────── */
-requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add("is-ready")));
-
 /* ── cached page metrics ───────────────────────────────────────────── */
 const header = document.querySelector("#siteHeader");
 const bar = document.querySelector(".progress i");
@@ -95,6 +92,7 @@ window.addEventListener("scroll", requestTick, { passive: true });
    between frames — a flick scroll, or an in-page anchor jump. */
 const pending = new Set(document.querySelectorAll(".reveal"));
 const counters = new Set(document.querySelectorAll("[data-count]"));
+const countFrames = new Map();
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 
 function reveal(el) {
@@ -104,22 +102,20 @@ function reveal(el) {
 }
 
 function countUp(el) {
+  if (!counters.delete(el)) return;
   const target = parseFloat(el.dataset.count);
   const duration = parseInt(el.dataset.dur, 10) || 1000;
-  counters.delete(el);
   countWatcher.unobserve(el);
-  if (calm.matches || !Number.isFinite(target)) {
-    el.textContent = target;
-    return;
-  }
+  if (calm.matches || !Number.isFinite(target)) return;
   const start = performance.now();
   const step = (now) => {
     const t = Math.min((now - start) / duration, 1);
     el.textContent = Math.round(target * easeOut(t));
-    if (t < 1) requestAnimationFrame(step);
+    if (t < 1) countFrames.set(el, requestAnimationFrame(step));
+    else countFrames.delete(el);
   };
   el.textContent = "0";
-  requestAnimationFrame(step);
+  countFrames.set(el, requestAnimationFrame(step));
 }
 
 const watcher = new IntersectionObserver((entries) => {
@@ -203,12 +199,22 @@ window.addEventListener("resize", () => {
   }, 160);
 }, { passive: true });
 
-/* printing mid-count would put a half-finished figure on paper */
-window.addEventListener("beforeprint", () => {
-  for (const el of document.querySelectorAll("[data-count]")) {
+/* Preserve the final figures even if printing starts between frames. */
+function finishCounts() {
+  for (const [el, frame] of countFrames) {
+    cancelAnimationFrame(frame);
     el.textContent = el.dataset.count;
-    counters.delete(el);
   }
+  countFrames.clear();
+  countWatcher.disconnect();
+  counters.clear();
+}
+window.addEventListener("beforeprint", finishCounts);
+calm.addEventListener("change", () => {
+  if (calm.matches) finishCounts();
+  splitHeadings();
+  measure();
+  onScroll();
 });
 
 /* ── active section in the nav ─────────────────────────────────────── */
@@ -251,11 +257,12 @@ function trackPointer(el, write, leave) {
   };
   const flush = () => {
     queued = false;
-    if (box) write(el, px - box.left, py - box.top, box);
+    if (box && !calm.matches) write(el, px - box.left, py - box.top, box);
   };
 
   el.addEventListener("pointerenter", read);
   el.addEventListener("pointermove", (event) => {
+    if (calm.matches) return;
     if (!box || readAt !== geomTick) read();
     px = event.clientX;
     py = event.clientY;
@@ -270,7 +277,7 @@ function trackPointer(el, write, leave) {
   });
 }
 
-if (fine.matches && !calm.matches) {
+if (fine.matches) {
   document.querySelectorAll("[data-magnetic]").forEach((el) => {
     trackPointer(el, (node, x, y, box) => {
       node.style.setProperty("--mx", `${(x - box.width / 2) * 0.16}px`);
@@ -307,7 +314,6 @@ const menuButton = document.querySelector(".menu-toggle");
 const sheet = document.querySelector("#primary-nav");
 
 if (menuButton && sheet) {
-  let lastFocus = null;
   const isOpen = () => menuButton.getAttribute("aria-expanded") === "true";
 
   /* The visible word turns over in CSS, with both words in the box so the
@@ -319,27 +325,33 @@ if (menuButton && sheet) {
   const setOpen = (open) => {
     menuButton.setAttribute("aria-expanded", String(open));
     menuButton.setAttribute("aria-label", open ? "Close the menu" : "Open the menu");
+    sheet.inert = mobile.matches && !open;
 
     /* Hold the page exactly where it was. Clipping it with overflow:hidden
        lets the browser clamp the scroll position, and the few pixels it
-       moves are visible as a jolt behind the sheet. */
+       moves are visible as a jolt behind the sheet.
+
+       Pinning the body is only half of holding it still. The masthead goes
+       position: fixed for the same reason — a pinned body leaves sticky
+       nothing to resolve against — and that drops it out of the flow, so
+       the rest of the page slides up by the masthead's full height. The
+       body reserves that height for as long as the sheet is open, measured
+       from the real box rather than assumed from a token, so a masthead
+       that is taller than its minimum still leaves no gap. */
     if (open) {
       lockedY = window.scrollY;
+      root.style.setProperty("--lock-pad", `${header.getBoundingClientRect().height}px`);
       root.classList.add("nav-open");
       document.body.style.top = `-${lockedY}px`;
+      menuButton.focus({ preventScroll: true });
     } else {
       root.classList.remove("nav-open");
+      root.style.removeProperty("--lock-pad");
       document.body.style.top = "";
-      window.scrollTo(0, lockedY);
-    }
-    /* Focus stays on the toggle, which is the first stop in the trap below:
-       moving it into the sheet while the sheet is still visibility:hidden is
-       a silent no-op, and jumping the caret is jarring either way. */
-    if (open) {
-      lastFocus = document.activeElement;
-    } else if (lastFocus) {
-      lastFocus.focus({ preventScroll: true });
-      lastFocus = null;
+      window.scrollTo({ top: lockedY, behavior: "instant" });
+      if (mobile.matches) menuButton.focus({ preventScroll: true });
+      measure();
+      requestTick();
     }
   };
 
@@ -349,6 +361,7 @@ if (menuButton && sheet) {
   const syncToViewport = () => {
     menuButton.hidden = !mobile.matches;
     if (!mobile.matches && isOpen()) setOpen(false);
+    sheet.inert = mobile.matches && !isOpen();
   };
 
   syncToViewport();
@@ -381,6 +394,8 @@ if (menuButton && sheet) {
 }
 
 /* ── first pass ────────────────────────────────────────────────────── */
+root.classList.add("js");
+requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add("is-ready")));
 splitHeadings();
 measure();
 onScroll();
@@ -388,5 +403,5 @@ sweep();
 
 window.addEventListener("load", () => { measure(); onScroll(); sweep(); });
 if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(() => { measure(); onScroll(); });
+  document.fonts.ready.then(() => { splitHeadings(); measure(); onScroll(); sweep(); });
 }

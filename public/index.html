@@ -20,7 +20,6 @@
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preload" href="assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
-  <script>document.documentElement.classList.add("js")</script>
   <script src="site.js" defer></script>
   <script type="application/ld+json">
   {
@@ -38,16 +37,23 @@
     "sameAs": ["https://www.linkedin.com/in/selinaarmstrong", "https://github.com/SelinaArmstrong"]
   }
   </script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GSVNHSVJQD"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag("js", new Date());
-    if (window.location.hostname === "selinaq.com") {
-      gtag("config", "G-GSVNHSVJQD", {
+    /* The apex is canonical, but a visit that lands on www is still a real
+       visit — gating on the apex alone silently loses it. Nothing else
+       serves this site, so no other host measures. */
+    if (["selinaq.com", "www.selinaq.com"].includes(window.location.hostname)) {
+      const measurementId = "G-GSVNHSVJQD";
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", measurementId, {
         allow_google_signals: false,
         allow_ad_personalization_signals: false
       });
+      const tag = document.createElement("script");
+      tag.async = true;
+      tag.src = "https://www.googletagmanager.com/gtag/js?id=" + measurementId;
+      document.head.append(tag);
     }
   </script>
 </head>
@@ -72,6 +78,7 @@
         <span class="wordmark">Selina Armstrong</span>
         <span class="role">Senior Contract Specialist</span>
       </a>
+      <a class="menu-fallback" href="#footer-nav">Navigation</a>
       <button type="button" class="menu-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Open the menu" hidden>
         <span class="menu-label" aria-hidden="true"><i>Menu</i><i>Close</i></span>
         <span class="menu-icon" aria-hidden="true"><i></i><i></i></span>
@@ -128,7 +135,6 @@
           I spent seven years finding them — now I build the systems that close them.</p>
       </div>
     </section>
-    </div>
 
     <section class="section" id="work" aria-labelledby="work-title">
       <div class="shell">
@@ -334,7 +340,7 @@
         <span class="wordmark">Selina Armstrong</span>
         <span class="role">Senior Contract Specialist</span>
       </a>
-      <nav class="footer-nav" aria-label="Footer">
+      <nav class="footer-nav" id="footer-nav" tabindex="-1" aria-label="Footer">
         <a href="#work">Work</a>
         <a href="#experience">Experience</a>
         <a href="#capabilities">Capabilities</a>

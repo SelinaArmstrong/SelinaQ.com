@@ -61,6 +61,9 @@ The footer links to the privacy policy at `/privacy/`.
 - `assets/contractledger-dashboard.webp`, `asylumcompass-home.webp` — both are
   captured at the same viewport by `design/capture-shots.sh`. The frames on the
   page take the image's own height, so equal heights depend on equal captures.
+- `public/_headers` — each file under `assets/` is named there individually,
+  because matching rules are merged rather than overridden. A new asset with
+  no line of its own still works; it just revalidates on every view.
 - `assets/favicon-32.png`, `favicon-64.png`, `apple-touch-icon.png` — the mark
   is the Geist "S", white on azure, full bleed. Each size is rendered natively
   rather than downscaled from one master, so the small ones stay crisp.

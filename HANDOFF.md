@@ -168,6 +168,11 @@ unless Cloudflare's **Browser Cache TTL stays on "Respect Existing
 Headers"** — it was set to 4 hours once, which silently overrode
 everything. If caching looks wrong, check that switch before the file.
 
+Matching rules in `_headers` are merged, not overridden — a `/assets/*`
+rule beside an `/assets/fonts/*` rule emits both values into one
+`Cache-Control` and the longer life loses. That is why the images are
+named one by one instead of globbed.
+
 The images get a week rather than a year on purpose: `capture-shots.sh`
 and `og-card.html` both overwrite in place, so a year-long `immutable`
 would strand returning visitors on a stale screenshot. The font is the

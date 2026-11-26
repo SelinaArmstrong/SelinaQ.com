@@ -20,19 +20,45 @@
   Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=()
   X-Frame-Options: DENY
 
-# Screenshots, favicons and the Open Graph card are regenerated in place,
-# under the same filenames — `design/capture-shots.sh` and
-# `design/og-card.html` both overwrite rather than version. A year would
-# strand a returning visitor on a stale image, so these get a week: long
-# enough to stop the per-visit revalidation, short enough that a new
-# capture reaches everyone within days.
-/assets/*
+# Every path below is listed once and on purpose. Matching rules are
+# MERGED here, not overridden: a `/assets/*` rule alongside an
+# `/assets/fonts/*` rule emits
+#   Cache-Control: public, max-age=604800, public, max-age=31536000, immutable
+# and the longer life silently loses. So the two lifetimes under /assets/
+# are kept apart by naming the files rather than globbing them.
+#
+# ADDING AN ASSET MEANS ADDING A LINE HERE. One that is missed is not
+# broken, only slow: it falls back to the Workers default and revalidates
+# on every view.
+#
+# Screenshots, favicons and the social card are regenerated in place under
+# the same filenames — `design/capture-shots.sh` and `design/og-card.html`
+# both overwrite rather than version — so a year of `immutable` would
+# strand a returning visitor on a stale image. A week is long enough to
+# stop the per-visit revalidation and short enough that a new capture
+# reaches everyone within days.
+/assets/contractledger-dashboard.webp
   Cache-Control: public, max-age=604800
 
-# The font is the one asset that genuinely never changes in place. It is a
-# fixed subset of one weight axis; a different subset would be a different
-# file. Declared after /assets/* so it wins whichever way the matcher
-# resolves precedence.
+/assets/asylumcompass-home.webp
+  Cache-Control: public, max-age=604800
+
+/assets/selina-armstrong.jpg
+  Cache-Control: public, max-age=604800
+
+/assets/favicon-32.png
+  Cache-Control: public, max-age=604800
+
+/assets/favicon-64.png
+  Cache-Control: public, max-age=604800
+
+/assets/apple-touch-icon.png
+  Cache-Control: public, max-age=604800
+
+# The font is the one asset that genuinely never changes in place: it is a
+# fixed subset of one weight axis, and a different subset would be a
+# different file. Nothing else matches this path, so it may carry a year
+# and `immutable` without colliding with the rules above.
 /assets/fonts/*
   Cache-Control: public, max-age=31536000, immutable
 

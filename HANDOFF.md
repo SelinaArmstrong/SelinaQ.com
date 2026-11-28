@@ -187,10 +187,11 @@ against it end to end. What moved:
 the owner's own export of that master. That export drops the page-number
 footer and is otherwise word for word the 27 November one, so no claim on
 the page moved with it. The master on the owner's disk at
-`content/Selina-Armstrong-Resume-master.docx` -- gitignored, as ever -- is
-the 27 November file and still carries that footer, so an export made from
-it would put the numbers back. Each export is re-checked as the release
-notes above require: two pages, text matching the master line for line, the
+`content/Selina-Armstrong-Resume-master.docx` -- gitignored, as ever -- was
+replaced with the matching file, so an export made from it now reproduces
+what ships: its body text is identical to the 27 November master and it
+carries no footer part at all, where the earlier one held a `PAGE` field.
+Each export is re-checked as the release notes above require: two pages, text matching the master line for line, the
 contact line carrying `selinaq.com`, an empty document-attribute dictionary
 (so no author name or local path travels with the file), and six links that
 are all the owner's own -- selinaq.com, the LinkedIn profile, the mailto,

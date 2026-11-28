@@ -735,7 +735,9 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .rail ul li::before { content: ""; position: absolute; left: 0; top: .7em; width: .5rem; height: var(--rule); background: var(--ac-dk); }
 
 /* ─────────────────────────────  CAPABILITIES  ─────────────────────── */
-.cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap-card); }
+/* Four groups, so two by two: the resume names four, and a 3+1 row
+   leaves the fourth card reading as an afterthought. */
+.cap-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap-card); }
 .cap {
   position: relative; isolation: isolate; overflow: hidden; border-radius: var(--r);
   padding: var(--pad-card); border: var(--rule) solid var(--line);
@@ -905,7 +907,6 @@ footer { border-top: var(--rule) solid var(--line); background: var(--bg-1); box
 @media (max-width: 1080px) {
   .exp-grid { grid-template-columns: 1fr; }
   .exp-head { position: static; }
-  .cap-grid { grid-template-columns: 1fr 1fr; }
   .credentials { grid-template-columns: 1fr; gap: var(--s-6); }
 }
 @media (max-width: 860px) {

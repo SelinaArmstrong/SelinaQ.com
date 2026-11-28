@@ -149,10 +149,62 @@ hero line, the metrics, Capabilities, the timeline bullets and the project
 tags against it. Accented characters were removed deliberately: the word is
 "resume", not "résumé".
 
-The shipped PDF, `public/Selina-Armstrong-Resume.pdf`, was replaced on
-25 November 2026 from the owner's current export, whose contact line carries
-`selinaq.com`. Nothing on the page needed changing: every figure, counterparty
-and date in that export matches what was already there.
+The master was replaced on 27 November 2026 and the page was re-checked
+against it end to end. What moved:
+
+- The kicker and Capabilities follow the master's four competency groups --
+  Contract management, CLM & contract operations, Procurement & vendor
+  governance, Systems & tools. The card grid is two by two for that reason.
+  DocuSign is no longer in the master, so it is no longer on the page.
+- The metrics lead with the cumulative portfolio, nearly 2,000 contracts and
+  USD 130M+ as Senior Contract Specialist. The ~500 contracts and USD 35M+ a
+  year are still in the master and moved into the Trajectory entry, where the
+  period they belong to is already stated.
+- The RMB 100M (~USD 14M) figure is potential off-contract *purchasing*
+  exposure beyond contract expiration dates, caught before the affected
+  contracts took effect -- not contract risk escalated in review. The master
+  now says which; the page used to state the looser version.
+- The supplier qualification registry covers ~700 suppliers, and three junior
+  administrators were mentored. Both numbers are new in the master.
+- Komatsu is no longer listed beside Joy Global (now Komatsu Mining),
+  Caterpillar and WesTrac. Cycle time is stated as 50-75%.
+- The career break runs 2021-2026 and includes the self-directed AI study
+  that began in 2025.
+- The certification is the NCMA **Certified Professional Contract Manager**
+  (CPCM), pursued with the exam targeted 2027 -- not "Contracts Manager",
+  not "coursework in progress". The LL.B. carries "U.S. bachelor's
+  equivalent", and Intermediate Economist (Human Resources Management, 2020)
+  is new.
+- "Open to Sacramento" is gone from the master, so it is gone from the hero,
+  the contact block and the contact note. `design/directions.html` still
+  carries it; that file is a visual study and is not deployed.
+- The Open Graph card carries the hero's strap line, so it was re-rendered
+  from `design/og-card.html` with the new one, and both `og:image:alt` and
+  `twitter:image:alt` follow it. The card's title is still "Senior Contract
+  Specialist", as the master's experience section is.
+
+`public/Selina-Armstrong-Resume.pdf` was replaced on 27 November 2026 from
+the owner's own export of that master, and re-checked as the release notes
+above require: two pages, text matching the master line for line, the
+contact line carrying `selinaq.com`, an empty document-attribute dictionary
+(so no author name or local path travels with the file), and six links that
+are all the owner's own -- selinaq.com, the LinkedIn profile, the mailto,
+contractledger.selinaq.com, asylumcompass.com, and the ContractLedger
+repository under `SelinaArmstrong`.
+
+Producing that export is a manual step, and two things make it so. There is
+no headless converter on this machine -- no LibreOffice, no pandoc, no
+poppler -- and AppleScript cannot drive Word into doing it: Word accepts the
+Apple events, then reports zero open documents, so `save as ... format PDF`
+has nothing to act on. And both the master and the export live in iCloud
+Drive (`~/Library/Mobile Documents`), which this app is refused by macOS
+even with Full Disk Access granted, because the process that runs the agent
+is a nested helper under Application Support rather than `/Applications/
+Claude.app`. So: the owner exports from Word by hand and drops the file
+somewhere reachable, such as the repository itself. `swift` with PDFKit
+reads the text back out for checking -- that is how the paragraph above was
+verified -- and installing LibreOffice would make the export itself
+scriptable (`soffice --headless --convert-to pdf`).
 
 The editable master is **deliberately not in this repository** and never has
 been in its history — it is the owner's file, kept off the public record by

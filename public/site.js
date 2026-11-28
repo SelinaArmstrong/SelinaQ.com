@@ -94,6 +94,8 @@ const pending = new Set(document.querySelectorAll(".reveal"));
 const counters = new Set(document.querySelectorAll("[data-count]"));
 const countFrames = new Map();
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+/* Four digits need the separator: 2,000 reads as a count, 2000 reads as a year. */
+const groupDigits = (n) => n.toLocaleString("en-US");
 
 function reveal(el) {
   el.classList.add("in");
@@ -110,7 +112,7 @@ function countUp(el) {
   const start = performance.now();
   const step = (now) => {
     const t = Math.min((now - start) / duration, 1);
-    el.textContent = Math.round(target * easeOut(t));
+    el.textContent = groupDigits(Math.round(target * easeOut(t)));
     if (t < 1) countFrames.set(el, requestAnimationFrame(step));
     else countFrames.delete(el);
   };
@@ -144,7 +146,7 @@ function sweep() {
       if (rect.bottom < 0) {
         counters.delete(el);
         countWatcher.unobserve(el);
-        el.textContent = el.dataset.count;   /* scrolled past already: no animation */
+        el.textContent = groupDigits(parseFloat(el.dataset.count));   /* scrolled past already: no animation */
       } else {
         countUp(el);
       }
@@ -203,7 +205,7 @@ window.addEventListener("resize", () => {
 function finishCounts() {
   for (const [el, frame] of countFrames) {
     cancelAnimationFrame(frame);
-    el.textContent = el.dataset.count;
+    el.textContent = groupDigits(parseFloat(el.dataset.count));
   }
   countFrames.clear();
   countWatcher.disconnect();
